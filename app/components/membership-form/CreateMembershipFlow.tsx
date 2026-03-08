@@ -1171,13 +1171,25 @@ export function CreateMembershipFlow({
               {panelKind === "perk" ? (
                 <div className={styles.panelBody}>
                   <div className={styles.perkPicker}>
-                    <div className={styles.perkPickerHeader}>
-                      <p className={styles.rowLabel}>Available perks</p>
-                      <span className={styles.perkPickerMeta}>
-                        {editingInclusionId ? "Choose 1 perk" : "Select one or more"}
-                      </span>
-                    </div>
+                  <div className={styles.perkPickerHeader}>
+                    <p className={styles.rowLabel}>Available perks</p>
+                    <span className={styles.perkPickerMeta}>
+                      {editingInclusionId ? "Choose 1 perk" : "Select one or more"}
+                    </span>
+                  </div>
 
+                  <div className={styles.perkOptionList}>
+                    {availablePerks.map((perk) => (
+                      <label key={perk} className={styles.perkOptionRow}>
+                          <Checkbox
+                            checked={selectedPerkLabels.includes(perk)}
+                            ariaLabel={`Select ${perk}`}
+                            onChange={() => togglePerkSelection(perk)}
+                          />
+                          <span className={styles.perkOptionLabel}>{perk}</span>
+                        </label>
+                      ))}
+                    </div>
                     <div className={styles.inlinePerkCreator}>
                       <input
                         value={customPerkLabel}
@@ -1192,19 +1204,6 @@ export function CreateMembershipFlow({
                       >
                         Add perk
                       </button>
-                    </div>
-
-                    <div className={styles.perkOptionList}>
-                      {availablePerks.map((perk) => (
-                        <label key={perk} className={styles.perkOptionRow}>
-                          <Checkbox
-                            checked={selectedPerkLabels.includes(perk)}
-                            ariaLabel={`Select ${perk}`}
-                            onChange={() => togglePerkSelection(perk)}
-                          />
-                          <span className={styles.perkOptionLabel}>{perk}</span>
-                        </label>
-                      ))}
                     </div>
                     <p className={styles.selectionCount}>{selectedPerkCount} selected</p>
                   </div>

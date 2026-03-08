@@ -14,6 +14,6 @@ export type MemberRecord = {
   patientName: string;
   planName: string;
   nextPaymentDate: string;
-  paidToDate: string;
+  paidToDate: number;
   term: string;
 };

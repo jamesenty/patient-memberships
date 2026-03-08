@@ -5,10 +5,12 @@ type MembersTableProps = {
   members: MemberRecord[];
 };
 
+const formatCurrency = (value: number) => `$${value.toLocaleString()}`;
+
 export function MembersTable({ members }: MembersTableProps) {
   return (
     <div className={styles.tableWrap}>
-      <table className={styles.table}>
+      <table className={`${styles.table} ${styles.membersTable}`}>
         <thead>
           <tr>
             <th>Patient Name</th>
@@ -24,7 +26,7 @@ export function MembersTable({ members }: MembersTableProps) {
               <td>{member.patientName}</td>
               <td>{member.planName}</td>
               <td>{member.nextPaymentDate}</td>
-              <td>{member.paidToDate}</td>
+              <td>{formatCurrency(member.paidToDate)}</td>
               <td>{member.term}</td>
             </tr>
           ))}

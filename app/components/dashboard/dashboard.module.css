@@ -145,6 +145,35 @@
   width: 130px;
 }
 
+.membersTable {
+  min-width: 920px;
+}
+
+.membersTable th:nth-child(1),
+.membersTable td:nth-child(1) {
+  width: 260px;
+}
+
+.membersTable th:nth-child(2),
+.membersTable td:nth-child(2) {
+  width: 220px;
+}
+
+.membersTable th:nth-child(3),
+.membersTable td:nth-child(3) {
+  width: 180px;
+}
+
+.membersTable th:nth-child(4),
+.membersTable td:nth-child(4) {
+  width: 150px;
+}
+
+.membersTable th:nth-child(5),
+.membersTable td:nth-child(5) {
+  width: 140px;
+}
+
 .nameCell {
   display: flex;
   flex-direction: column;

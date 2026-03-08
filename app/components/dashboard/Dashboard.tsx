@@ -125,8 +125,8 @@ export function Dashboard() {
             </div>
             <p className={styles.confirmText}>
               {pendingPlan.isActive
-                ? `${pendingPlan.name} will be marked inactive and removed from active membership totals.`
-                : `${pendingPlan.name} will be marked active and added back into active membership totals.`}
+                ? `Patients on ${pendingPlan.name} will keep their current history, but future membership charges and renewals will stop until you turn it back on.`
+                : `${pendingPlan.name} will start accepting recurring membership charges again and return to your active membership totals.`}
             </p>
             <div className={styles.confirmMeta}>
               <span>{pendingPlan.patients} patients</span>

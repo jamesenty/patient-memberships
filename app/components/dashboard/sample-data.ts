@@ -45,7 +45,7 @@ export const members: MemberRecord[] = [
     patientName: "Emma Clarke",
     planName: "Gold Tier",
     nextPaymentDate: "15 Mar 2026",
-    paidToDate: "14 Mar 2026",
+    paidToDate: 2094,
     term: "6/12 months",
   },
   {
@@ -53,7 +53,7 @@ export const members: MemberRecord[] = [
     patientName: "Sophie Nguyen",
     planName: "Silver Tier",
     nextPaymentDate: "20 Mar 2026",
-    paidToDate: "19 Mar 2026",
+    paidToDate: 687,
     term: "3/12 months",
   },
   {
@@ -61,7 +61,7 @@ export const members: MemberRecord[] = [
     patientName: "Olivia Hart",
     planName: "Bronze Tier",
     nextPaymentDate: "04 Apr 2026",
-    paidToDate: "03 Apr 2026",
+    paidToDate: 149,
     term: "Ongoing",
   },
   {
@@ -69,7 +69,7 @@ export const members: MemberRecord[] = [
     patientName: "Mia Bennett",
     planName: "Gold Tier",
     nextPaymentDate: "28 Mar 2026",
-    paidToDate: "27 Mar 2026",
+    paidToDate: 3839,
     term: "11/12 months",
   },
 ];
