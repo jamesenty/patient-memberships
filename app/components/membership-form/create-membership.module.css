@@ -1,9 +1,6 @@
 .page {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at 12% 0%, var(--page-tint-a), transparent 30%),
-    radial-gradient(circle at 90% 80%, var(--page-tint-b), transparent 28%),
-    var(--color-bg);
+  background: var(--color-bg);
   padding: clamp(0.8rem, 1.3vw, 1.4rem);
 }
 
@@ -218,7 +215,7 @@
 .inclusionMobileCard {
   border: 1px solid var(--color-stroke-default);
   border-radius: var(--space-12);
-  background: linear-gradient(180deg, var(--color-fill-primary) 0%, var(--color-fill-secondary) 100%);
+  background: var(--color-fill-primary);
   padding: 0.85rem;
   display: grid;
   gap: 0.65rem;

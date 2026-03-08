@@ -47,7 +47,7 @@ export function MembershipsTable({
               return (
                 <tr key={plan.id} className={!plan.isActive ? styles.inactiveRow : undefined}>
                   <td>
-                    <div className={styles.nameCell}>
+                    <div className={styles.tableIdentity}>
                       <div className={styles.planNameRow}>
                         <span
                           className={`${styles.tierDot} ${planAccentClass[plan.id] ?? styles.tierDotGold}`}
@@ -65,7 +65,7 @@ export function MembershipsTable({
                   <td>
                     <ul className={styles.dotList}>
                       {plan.inclusions.map((inclusion) => (
-                        <li key={inclusion}>{inclusion}</li>
+                        <li key={inclusion.id}>{inclusion.label}</li>
                       ))}
                     </ul>
                   </td>
@@ -121,7 +121,7 @@ export function MembershipsTable({
               className={`${styles.mobileCard} ${!plan.isActive ? styles.mobileCardInactive : ""}`}
             >
               <div className={styles.mobileCardHeader}>
-                <div className={styles.nameCell}>
+                <div className={styles.mobileIdentity}>
                   <div className={styles.planNameRow}>
                     <span
                       className={`${styles.tierDot} ${planAccentClass[plan.id] ?? styles.tierDotGold}`}
@@ -159,15 +159,15 @@ export function MembershipsTable({
               </div>
 
               <dl className={styles.mobileMetaGrid}>
-                <div>
+                <div className={styles.mobileMetaItem}>
                   <dt>Patients</dt>
                   <dd>{plan.patients}</dd>
                 </div>
-                <div>
+                <div className={styles.mobileMetaItem}>
                   <dt>Price</dt>
                   <dd>{formatCurrency(plan.monthlyPrice)}</dd>
                 </div>
-                <div>
+                <div className={styles.mobileMetaItem}>
                   <dt>Revenue</dt>
                   <dd>{formatCurrency(revenue)}</dd>
                 </div>
@@ -177,7 +177,7 @@ export function MembershipsTable({
                 <p className={styles.mobileSectionLabel}>Inclusions</p>
                 <ul className={styles.mobileList}>
                   {plan.inclusions.map((inclusion) => (
-                    <li key={`mobile-${plan.id}-${inclusion}`}>{inclusion}</li>
+                    <li key={`mobile-${plan.id}-${inclusion.id}`}>{inclusion.label}</li>
                   ))}
                 </ul>
               </div>

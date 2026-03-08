@@ -5,6 +5,9 @@ type MetricIcon = "plans" | "patients" | "revenue";
 type MetricCardProps = {
   label: string;
   value: string | number;
+  secondaryLabel?: string;
+  secondaryValue?: string;
+  secondaryInline?: boolean;
   tone: "plans" | "patients" | "revenue";
   icon: MetricIcon;
 };
@@ -33,7 +36,15 @@ function MetricIconGlyph({ icon }: { icon: MetricIcon }) {
   );
 }
 
-export function MetricCard({ label, value, tone, icon }: MetricCardProps) {
+export function MetricCard({
+  label,
+  value,
+  secondaryLabel,
+  secondaryValue,
+  secondaryInline = false,
+  tone,
+  icon,
+}: MetricCardProps) {
   const toneClass =
     tone === "plans"
       ? styles.metricTonePlans
@@ -49,7 +60,21 @@ export function MetricCard({ label, value, tone, icon }: MetricCardProps) {
           <MetricIconGlyph icon={icon} />
         </span>
       </div>
-      <span className={styles.metricValue}>{value}</span>
+      <div
+        className={`${styles.metricValueGroup} ${
+          secondaryInline ? styles.metricValueGroupInline : ""
+        }`}
+      >
+        <span className={styles.metricValue}>{value}</span>
+        {secondaryValue ? (
+          <span className={styles.metricSecondaryValue}>
+            {secondaryLabel ? <span className={styles.metricSecondaryLabel}>{secondaryLabel}</span> : null}
+            <span>{secondaryValue}</span>
+          </span>
+        ) : secondaryInline ? null : (
+          <span className={styles.metricSecondaryPlaceholder} aria-hidden="true" />
+        )}
+      </div>
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { MembersTable } from "./MembersTable";
+import { MemberDetailPane } from "./MemberDetailPane";
 import { MembershipsTable } from "./MembershipsTable";
 import { members, membershipPlans } from "./sample-data";
 import { MetricCard } from "../ui/MetricCard";
@@ -10,6 +11,7 @@ import { SegmentedToggle } from "../ui/SegmentedToggle";
 import styles from "./dashboard.module.css";
 
 type TabId = "memberships" | "members";
+type MemberDrawerMode = "snapshot" | "manage";
 
 const tabs: { id: TabId; label: string }[] = [
   { id: "memberships", label: "Memberships" },
@@ -20,6 +22,8 @@ export function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>("memberships");
   const [plans, setPlans] = useState(membershipPlans);
   const [pendingPlan, setPendingPlan] = useState<(typeof membershipPlans)[number] | null>(null);
+  const [openMemberId, setOpenMemberId] = useState<string | null>(null);
+  const [openMemberMode, setOpenMemberMode] = useState<MemberDrawerMode>("snapshot");
 
   const planCount = plans.length;
   const memberCount = useMemo(
@@ -39,6 +43,11 @@ export function Dashboard() {
     currency: "AUD",
     maximumFractionDigits: 0,
   }).format(monthlyRevenue);
+  const formattedAnnualisedRevenue = new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: 0,
+  }).format(monthlyRevenue * 12);
 
   const metrics = [
     { id: "plans", label: "Membership Plans", value: planCount, tone: "plans", icon: "plans" },
@@ -53,10 +62,14 @@ export function Dashboard() {
       id: "revenue",
       label: "Monthly Membership Revenue",
       value: formattedMonthlyRevenue,
+      secondaryLabel: "Annualised",
+      secondaryValue: formattedAnnualisedRevenue,
       tone: "revenue",
       icon: "revenue",
     },
   ] as const;
+
+  const openMember = members.find((member) => member.id === openMemberId) ?? null;
 
   const confirmTogglePlanStatus = () => {
     if (!pendingPlan) {
@@ -90,6 +103,9 @@ export function Dashboard() {
               key={metric.id}
               label={metric.label}
               value={metric.value}
+              secondaryLabel={"secondaryLabel" in metric ? metric.secondaryLabel : undefined}
+              secondaryValue={"secondaryValue" in metric ? metric.secondaryValue : undefined}
+              secondaryInline={metric.id === "revenue"}
               tone={metric.tone}
               icon={metric.icon}
             />
@@ -111,14 +127,26 @@ export function Dashboard() {
               onTogglePlanStatus={setPendingPlan}
             />
           ) : (
-            <MembersTable members={members} />
+            <MembersTable
+              members={members}
+              onOpenMember={(memberId, mode) => {
+                setOpenMemberId(memberId);
+                setOpenMemberMode(mode);
+              }}
+            />
           )}
         </section>
       </div>
 
       {pendingPlan ? (
-        <div className={styles.confirmOverlay} role="dialog" aria-modal="true" aria-label="Confirm membership status change">
-          <div className={styles.confirmCard}>
+        <div
+          className={styles.confirmOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirm membership status change"
+          onClick={() => setPendingPlan(null)}
+        >
+          <div className={styles.confirmCard} onClick={(event) => event.stopPropagation()}>
             <div className={styles.confirmHeader}>
               <p className={styles.confirmEyebrow}>Membership Status</p>
               <h2>{pendingPlan.isActive ? "Pause this membership?" : "Resume this membership?"}</h2>
@@ -151,6 +179,25 @@ export function Dashboard() {
                 {pendingPlan.isActive ? "Pause Membership" : "Resume Membership"}
               </button>
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {openMember ? (
+        <div
+          className={styles.memberPaneOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${openMember.patientName} member snapshot`}
+          onClick={() => setOpenMemberId(null)}
+        >
+          <div className={styles.memberPanePositioner} onClick={(event) => event.stopPropagation()}>
+            <MemberDetailPane
+              key={`${openMember.id}-${openMemberMode}`}
+              member={openMember}
+              initialMode={openMemberMode}
+              onClose={() => setOpenMemberId(null)}
+            />
           </div>
         </div>
       ) : null}

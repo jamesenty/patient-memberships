@@ -897,8 +897,14 @@ export function CreateMembershipFlow({
       </form>
 
       {isPanelOpen ? (
-        <div className={styles.panelOverlay} role="dialog" aria-modal="true" aria-label="Add inclusion">
-          <div className={styles.sidePanel}>
+        <div
+          className={styles.panelOverlay}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Add inclusion"
+          onClick={closePanel}
+        >
+          <div className={styles.sidePanel} onClick={(event) => event.stopPropagation()}>
             <div className={styles.panelHeader}>
               <h3>Add Inclusion</h3>
               <button type="button" className={styles.closePanel} onClick={closePanel}>

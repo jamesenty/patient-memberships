@@ -37,8 +37,9 @@
   border: 1px solid;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: var(--space-12) var(--space-12);
+  gap: 10px;
 }
 
 .metricTop {
@@ -55,11 +56,50 @@
   text-transform: uppercase;
 }
 
+.metricValueGroup {
+  min-height: 34px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.metricValueGroupInline {
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .metricValue {
   color: var(--color-text-primary);
   font-size: 28px;
   line-height: 28px;
   font-weight: 500;
+}
+
+.metricSecondaryValue {
+  display: grid;
+  min-height: 34px;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-tertiary);
+}
+
+.metricValueGroupInline .metricSecondaryValue {
+  min-height: auto;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metricSecondaryPlaceholder {
+  min-height: 34px;
+}
+
+.metricSecondaryLabel {
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 11px;
 }
 
 .metricIcon {
@@ -80,7 +120,7 @@
 
 .metricTonePlans {
   border-color: var(--color-brand-secondary-200);
-  background: linear-gradient(135deg, var(--color-brand-secondary-50) 0%, var(--color-fill-primary) 100%);
+  background: var(--color-fill-primary);
 }
 
 .metricTonePlans .metricLabel {
@@ -94,7 +134,7 @@
 
 .metricTonePatients {
   border-color: var(--color-blue-100);
-  background: linear-gradient(135deg, var(--color-fill-info-weak) 0%, var(--color-fill-primary) 100%);
+  background: var(--color-fill-primary);
 }
 
 .metricTonePatients .metricLabel {
@@ -108,7 +148,7 @@
 
 .metricToneRevenue {
   border-color: var(--color-yellow-200);
-  background: linear-gradient(135deg, var(--color-fill-warning-weak) 0%, var(--color-fill-primary) 100%);
+  background: var(--color-fill-primary);
 }
 
 .metricToneRevenue .metricLabel {
@@ -118,6 +158,14 @@
 .metricToneRevenue .metricIcon {
   background: var(--color-sand-200);
   color: var(--color-icon-warning);
+}
+
+.metricToneRevenue .metricSecondaryValue {
+  color: var(--color-yellow-800);
+}
+
+.metricToneRevenue .metricSecondaryLabel {
+  color: var(--color-yellow-700);
 }
 
 .checkboxRoot {
