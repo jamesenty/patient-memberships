@@ -165,6 +165,10 @@
   background: var(--color-fill-primary);
 }
 
+.inclusionMobileList {
+  display: none;
+}
+
 .inclusionsTable {
   width: 100%;
   border-collapse: collapse;
@@ -209,6 +213,48 @@
   background: var(--color-fill-secondary);
   color: var(--color-text-tertiary);
   padding: 0.3rem 0.52rem;
+}
+
+.inclusionMobileCard {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-12);
+  background: linear-gradient(180deg, var(--color-fill-primary) 0%, var(--color-fill-secondary) 100%);
+  padding: 0.85rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.inclusionMobileHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.inclusionMobileType,
+.inclusionMobileCadence {
+  font-size: 0.72rem;
+  line-height: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-secondary);
+}
+
+.inclusionMobileCadence {
+  text-align: right;
+}
+
+.inclusionMobileDetail {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+
+.inclusionMobileActions {
+  display: flex;
+  gap: 0.45rem;
 }
 
 .toggleRow {
@@ -963,6 +1009,16 @@
     grid-template-columns: 1fr;
   }
 
+  .inclusionsTableWrap {
+    display: none;
+  }
+
+  .inclusionMobileList {
+    display: grid;
+    gap: 0.7rem;
+    margin-top: 0.7rem;
+  }
+
   .actions {
     justify-content: stretch;
   }
@@ -971,6 +1027,11 @@
   .publishButton {
     flex: 1;
     text-align: center;
+  }
+
+  .inclusionMobileActions .editButton,
+  .inclusionMobileActions .removeButton {
+    flex: 1;
   }
 
   .panelOverlay {

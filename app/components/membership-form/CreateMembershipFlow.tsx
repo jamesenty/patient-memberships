@@ -708,6 +708,40 @@ export function CreateMembershipFlow({
                 </tbody>
               </table>
             </div>
+
+            <div className={styles.inclusionMobileList}>
+              {inclusions.map((inclusion) => {
+                const summary = formatInclusionSummary(inclusion);
+
+                return (
+                  <article key={`mobile-inclusion-${inclusion.id}`} className={styles.inclusionMobileCard}>
+                    <div className={styles.inclusionMobileHeader}>
+                      <span className={styles.inclusionMobileType}>{summary.type}</span>
+                      <span className={styles.inclusionMobileCadence}>{summary.cadence}</span>
+                    </div>
+                    <p className={styles.inclusionMobileDetail}>{summary.detail}</p>
+                    <div className={styles.inclusionMobileActions}>
+                      <button
+                        className={styles.editButton}
+                        type="button"
+                        onClick={() => startEditInclusion(inclusion)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className={styles.removeButton}
+                        type="button"
+                        onClick={() =>
+                          setInclusions((current) => current.filter((entry) => entry.id !== inclusion.id))
+                        }
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
           </section>
 
           <section className={styles.section}>
