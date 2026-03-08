@@ -1,8 +1,11 @@
+import Link from "next/link";
 import type { MembershipPlan } from "./types";
 import styles from "./dashboard.module.css";
 
 type MembershipsTableProps = {
   plans: MembershipPlan[];
+  pendingPlanId?: string | null;
+  onTogglePlanStatus: (plan: MembershipPlan) => void;
 };
 
 const formatCurrency = (value: number) =>
@@ -18,7 +21,11 @@ const planAccentClass: Record<string, string> = {
   bronze: styles.tierDotBronze,
 };
 
-export function MembershipsTable({ plans }: MembershipsTableProps) {
+export function MembershipsTable({
+  plans,
+  pendingPlanId = null,
+  onTogglePlanStatus,
+}: MembershipsTableProps) {
   return (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
@@ -37,7 +44,7 @@ export function MembershipsTable({ plans }: MembershipsTableProps) {
             const revenue = plan.patients * plan.monthlyPrice;
 
             return (
-              <tr key={plan.id}>
+              <tr key={plan.id} className={!plan.isActive ? styles.inactiveRow : undefined}>
                 <td>
                   <div className={styles.nameCell}>
                     <div className={styles.planNameRow}>
@@ -66,14 +73,34 @@ export function MembershipsTable({ plans }: MembershipsTableProps) {
                 <td className={styles.numeric}>{formatCurrency(revenue)}</td>
                 <td>
                   <div className={styles.actionRow}>
-                    <button className={styles.actionButton} type="button" title="Set inactive">
-                      <span aria-hidden="true">↻</span>
-                      <span className={styles.srOnly}>Set inactive</span>
+                    <button
+                      className={`${styles.actionPill} ${
+                        plan.isActive ? styles.actionPillPause : styles.actionPillResume
+                      }`}
+                      type="button"
+                      title={plan.isActive ? "Pause membership" : "Resume membership"}
+                      onClick={() => onTogglePlanStatus(plan)}
+                      disabled={pendingPlanId === plan.id}
+                    >
+                      <span aria-hidden="true" className={styles.actionIcon}>
+                        {plan.isActive ? "⏸" : "↺"}
+                      </span>
+                      <span>{plan.isActive ? "Pause" : "Resume"}</span>
+                      <span className={styles.srOnly}>
+                        {plan.isActive ? "Pause membership" : "Resume membership"}
+                      </span>
                     </button>
-                    <button className={styles.actionButton} type="button" title="Edit membership">
-                      <span aria-hidden="true">✎</span>
+                    <Link
+                      className={styles.actionPill}
+                      href={`/memberships/${plan.id}`}
+                      title="Edit membership"
+                    >
+                      <span aria-hidden="true" className={styles.actionIcon}>
+                        ✎
+                      </span>
+                      <span>Edit</span>
                       <span className={styles.srOnly}>Edit membership</span>
-                    </button>
+                    </Link>
                   </div>
                 </td>
               </tr>

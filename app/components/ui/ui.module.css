@@ -4,36 +4,36 @@
   align-items: center;
   gap: var(--space-4);
   padding: var(--space-4);
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-sm);
-  background: var(--component-bg-muted);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-12);
+  background: var(--color-fill-secondary);
 }
 
 .segmentedButton,
 .segmentedActive {
-  height: var(--component-control-height-sm);
+  height: var(--space-32);
   padding: 0 var(--space-12);
-  border-radius: var(--component-radius-sm);
+  border-radius: var(--space-8);
   border: none;
   font-size: 14px;
   line-height: 20px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .segmentedButton {
   background: transparent;
-  color: var(--component-text-tertiary);
+  color: var(--color-text-tertiary);
 }
 
 .segmentedActive {
-  background: var(--component-action-bg);
-  color: var(--component-action-text);
-  box-shadow: var(--component-shadow-action);
+  background: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
+  box-shadow: 0 12px 24px -12px rgba(14, 66, 51, 0.15);
 }
 
 .metricCard {
   min-height: 66px;
-  border-radius: var(--component-radius-sm);
+  border-radius: var(--space-8);
   border: 1px solid;
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: var(--space-8);
 }
 
 .metricLabel {
@@ -56,16 +56,16 @@
 }
 
 .metricValue {
-  color: var(--component-text-primary);
+  color: var(--color-text-primary);
   font-size: 28px;
   line-height: 28px;
   font-weight: 500;
 }
 
 .metricIcon {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
+  width: var(--space-20);
+  height: var(--space-20);
+  border-radius: var(--space-4);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -73,18 +73,18 @@
 }
 
 .metricIcon svg {
-  width: 14px;
-  height: 14px;
+  width: var(--space-12);
+  height: var(--space-12);
   fill: currentColor;
 }
 
 .metricTonePlans {
-  border-color: #d1ece5;
-  background: linear-gradient(135deg, #f7fbfa 0%, #ffffff 100%);
+  border-color: var(--color-brand-secondary-200);
+  background: linear-gradient(135deg, var(--color-brand-secondary-50) 0%, var(--color-fill-primary) 100%);
 }
 
 .metricTonePlans .metricLabel {
-  color: #55766d;
+  color: var(--color-brand-secondary-800);
 }
 
 .metricTonePlans .metricIcon {
@@ -93,12 +93,12 @@
 }
 
 .metricTonePatients {
-  border-color: #b8d4e4;
-  background: linear-gradient(135deg, #f1f8fc 0%, #ffffff 100%);
+  border-color: var(--color-blue-100);
+  background: linear-gradient(135deg, var(--color-fill-info-weak) 0%, var(--color-fill-primary) 100%);
 }
 
 .metricTonePatients .metricLabel {
-  color: #176a99;
+  color: var(--color-blue-600);
 }
 
 .metricTonePatients .metricIcon {
@@ -107,12 +107,12 @@
 }
 
 .metricToneRevenue {
-  border-color: #ffe59f;
-  background: linear-gradient(135deg, #fff9ec 0%, #ffffff 100%);
+  border-color: var(--color-yellow-200);
+  background: linear-gradient(135deg, var(--color-fill-warning-weak) 0%, var(--color-fill-primary) 100%);
 }
 
 .metricToneRevenue .metricLabel {
-  color: #caa237;
+  color: var(--color-yellow-700);
 }
 
 .metricToneRevenue .metricIcon {
@@ -121,8 +121,8 @@
 }
 
 .checkboxRoot {
-  width: 20px;
-  height: 20px;
+  width: var(--space-20);
+  height: var(--space-20);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -138,14 +138,27 @@
 }
 
 .checkboxControl {
-  width: 16px;
-  height: 16px;
-  border-radius: var(--component-radius-xs);
-  border: 1px solid var(--component-border-default);
-  background: var(--component-bg-surface);
+  width: var(--space-16);
+  height: var(--space-16);
+  border-radius: var(--space-4);
+  border: 1px solid var(--color-stroke-default);
+  background: var(--color-fill-primary);
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: border-color 120ms ease, background-color 120ms ease;
+}
+
+.radioControl {
+  width: var(--space-16);
+  height: var(--space-16);
+  border-radius: 999px;
+  border: 1px solid var(--color-stroke-default);
+  background: var(--color-fill-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 120ms ease, background-color 120ms ease;
 }
 
 .checkboxInput:checked + .checkboxControl {
@@ -153,11 +166,34 @@
   background: var(--color-fill-brand-primary);
 }
 
+.checkboxInput:checked + .radioControl {
+  border-color: var(--color-stroke-brand-primary);
+  background: var(--color-fill-primary);
+}
+
+.checkboxInput:focus-visible + .checkboxControl {
+  outline: 2px solid var(--color-stroke-selected);
+  outline-offset: 1px;
+}
+
+.checkboxInput:focus-visible + .radioControl {
+  outline: 2px solid var(--color-stroke-selected);
+  outline-offset: 1px;
+}
+
 .checkboxInput:checked + .checkboxControl::after {
   content: "";
-  width: 8px;
-  height: 5px;
+  width: var(--space-8);
+  height: var(--space-4);
   border-left: 2px solid var(--color-text-inverse);
   border-bottom: 2px solid var(--color-text-inverse);
   transform: rotate(-45deg) translateY(-1px);
+}
+
+.checkboxInput:checked + .radioControl::after {
+  content: "";
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: 999px;
+  background: var(--color-fill-brand-primary);
 }

@@ -4,13 +4,17 @@ type CheckboxProps = {
   checked: boolean;
   ariaLabel: string;
   onChange: () => void;
+  type?: "checkbox" | "radio";
 };
 
-export function Checkbox({ checked, ariaLabel, onChange }: CheckboxProps) {
+export function Checkbox({ checked, ariaLabel, onChange, type = "checkbox" }: CheckboxProps) {
   return (
     <label className={styles.checkboxRoot} aria-label={ariaLabel}>
-      <input type="checkbox" checked={checked} onChange={onChange} className={styles.checkboxInput} />
-      <span className={styles.checkboxControl} aria-hidden="true" />
+      <input type={type} checked={checked} onChange={onChange} className={styles.checkboxInput} />
+      <span
+        className={type === "radio" ? styles.radioControl : styles.checkboxControl}
+        aria-hidden="true"
+      />
     </label>
   );
 }

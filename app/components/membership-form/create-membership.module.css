@@ -17,9 +17,9 @@
 }
 
 .formColumn {
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: var(--radius-l);
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
   box-shadow: var(--shadow-md);
   padding: clamp(1rem, 1.6vw, 1.8rem);
 }
@@ -29,27 +29,32 @@
 }
 
 .backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
   font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
+  text-decoration: none;
 }
 
 .pageHeader h1 {
   font-size: clamp(1.25rem, 1.5vw + 0.8rem, 1.85rem);
+  font-weight: 600;
   letter-spacing: -0.02em;
   margin: 0.35rem 0;
 }
 
 .pageHeader p {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   margin: 0;
 }
 
 .section {
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: var(--radius-m);
-  background: var(--color-surface-alt);
+  background: var(--color-fill-secondary);
   padding: 1rem;
   margin-top: 0.75rem;
 }
@@ -63,7 +68,7 @@
 .sectionHint {
   margin-top: 0.45rem;
   margin-bottom: 0.8rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: 0.88rem;
 }
 
@@ -92,7 +97,7 @@
   display: grid;
   gap: 0.38rem;
   font-size: 0.85rem;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
 }
 
 .fieldFull {
@@ -104,11 +109,11 @@
 .fieldFull textarea,
 .fieldInline input {
   width: 100%;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-stroke-strong);
   border-radius: 0.56rem;
   padding: 0.58rem 0.66rem;
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-fill-primary);
+  color: var(--color-text-primary);
 }
 
 .fieldFull textarea {
@@ -131,17 +136,22 @@
 }
 
 .ghostAction {
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  border-radius: 0.56rem;
-  padding: 0.45rem 0.62rem;
+  border: 1px solid var(--color-stroke-strong);
+  background: var(--color-fill-primary);
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
 }
 
 .inclusionStats {
   margin-top: 0.7rem;
   display: flex;
   gap: 0.6rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -149,10 +159,10 @@
 
 .inclusionsTableWrap {
   margin-top: 0.7rem;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
   overflow: auto;
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
 }
 
 .inclusionsTable {
@@ -164,7 +174,7 @@
 .inclusionsTable th,
 .inclusionsTable td {
   padding: 0.62rem 0.75rem;
-  border-bottom: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--color-stroke-default);
   text-align: left;
 }
 
@@ -172,8 +182,8 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--color-text-muted);
-  background: var(--color-surface-alt);
+  color: var(--color-text-secondary);
+  background: var(--color-fill-secondary);
 }
 
 .inclusionsTable tr:last-child td {
@@ -181,10 +191,10 @@
 }
 
 .removeButton {
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-stroke-strong);
   border-radius: 0.46rem;
   background: transparent;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   padding: 0.3rem 0.52rem;
 }
 
@@ -206,18 +216,44 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
   padding: 0.58rem 0.7rem;
   font-size: 0.9rem;
+}
+
+.toggleField {
+  padding: 0;
+  border: none;
+  background: transparent;
+  justify-content: initial;
+  align-items: stretch;
+  gap: 0.38rem;
+}
+
+.toggleFieldControl {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: 0.62rem;
+  background: var(--color-fill-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-height: 42px;
+  padding: 0.58rem 0.7rem;
+}
+
+.toggleFieldStatus {
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
 }
 
 .toggleOn,
 .toggleOff {
   width: 2.4rem;
   border-radius: 999px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-stroke-strong);
   padding: 2px;
   background: transparent;
   display: flex;
@@ -225,7 +261,7 @@
 
 .toggleOn {
   justify-content: flex-end;
-  background: var(--color-text);
+  background: var(--color-text-primary);
 }
 
 .toggleOn span,
@@ -237,18 +273,18 @@
 }
 
 .toggleOn span {
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
 }
 
 .toggleOff span {
-  background: var(--color-text);
+  background: var(--color-text-primary);
 }
 
 .durationWrap {
   margin-top: 0.8rem;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
   padding: 0.7rem;
   display: grid;
   gap: 0.55rem;
@@ -257,7 +293,7 @@
 .rowLabel {
   margin: 0;
   font-size: 0.86rem;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
 }
 
 .radioRow {
@@ -271,9 +307,9 @@
   display: grid;
   gap: 0.45rem;
   padding: 0.7rem;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
 }
 
 .actions {
@@ -281,23 +317,23 @@
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  border-top: 1px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-stroke-default);
   padding-top: 0.9rem;
 }
 
 .cancelButton,
 .publishButton {
   border-radius: 0.56rem;
-  border: 1px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
+  border: 1px solid var(--color-stroke-strong);
+  background: var(--color-fill-primary);
+  color: var(--color-text-primary);
   padding: 0.6rem 0.82rem;
 }
 
 .publishButton {
-  border-color: var(--color-action-border);
-  background: var(--color-action-bg);
-  color: var(--color-action-text);
+  border-color: var(--color-stroke-brand-primary);
+  background: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
   font-weight: 580;
 }
 
@@ -307,9 +343,9 @@
 }
 
 .previewCard {
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: var(--radius-l);
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
   box-shadow: var(--shadow-md);
   padding: 1rem;
 }
@@ -319,7 +355,7 @@
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .previewName {
@@ -331,7 +367,7 @@
 
 .previewDescription {
   margin: 0;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
   font-size: 0.9rem;
 }
 
@@ -342,7 +378,7 @@
 }
 
 .previewMeta div {
-  border-top: 1px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-stroke-default);
   padding-top: 0.56rem;
 }
 
@@ -350,7 +386,7 @@
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .previewMeta dd {
@@ -363,7 +399,7 @@
   font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .previewList {
@@ -371,29 +407,41 @@
   padding-left: 1rem;
   display: grid;
   gap: 0.34rem;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
   font-size: 0.88rem;
 }
 
 .panelOverlay {
   position: fixed;
   inset: 0;
-  background: var(--overlay-backdrop);
+  background: var(--color-fill-overlay);
   display: flex;
   justify-content: flex-end;
   z-index: 20;
+  overflow: hidden;
 }
 
 .sidePanel {
   width: min(460px, 100%);
-  height: 100%;
-  background: var(--color-surface);
-  border-left: 1px solid var(--color-border-soft);
+  height: 100dvh;
+  background: var(--color-fill-primary);
+  border-left: 1px solid var(--color-stroke-default);
   box-shadow: var(--shadow-md);
   padding: 0.95rem;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+.panelScrollArea {
+  margin-top: 0.72rem;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding-right: 2px;
 }
 
 .panelHeader {
@@ -409,22 +457,21 @@
 }
 
 .closePanel {
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-stroke-strong);
   background: transparent;
   border-radius: 0.5rem;
   padding: 0.38rem 0.55rem;
 }
 
 .panelBody {
-  margin-top: 0.72rem;
   display: grid;
   gap: 0.7rem;
 }
 
 .panelPrimary {
-  border: 1px solid var(--color-action-border);
-  background: var(--color-action-bg);
-  color: var(--color-action-text);
+  border: 1px solid var(--color-stroke-brand-primary);
+  background: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
   border-radius: 0.56rem;
   padding: 0.6rem 0.78rem;
   font-weight: 570;
@@ -437,16 +484,16 @@
 
 .selectionInline {
   margin: 0;
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
-  background: var(--color-surface-alt);
+  background: var(--color-fill-secondary);
   padding: 0.58rem 0.65rem;
   font-size: 0.8rem;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
 }
 
 .selectionInline strong {
-  color: var(--color-text);
+  color: var(--color-text-primary);
   font-weight: 620;
 }
 
@@ -477,12 +524,12 @@
 }
 
 .selectionSummaryEmpty {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .panePreview {
   margin-top: 0.85rem;
-  border-top: 1px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-stroke-default);
   padding-top: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -503,49 +550,70 @@
   padding-right: 2px;
 }
 
-.panePreviewList li {
-  display: grid;
-  gap: 0.1rem;
-  border: 1px solid var(--color-border-soft);
-  border-radius: 0.5rem;
-  padding: 0.4rem 0.5rem;
-  background: var(--color-surface-alt);
+.inclusionPreviewCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-8);
+  padding: var(--space-12);
+  background: var(--color-fill-primary);
 }
 
-.panePreviewList li span:first-child {
-  font-size: 0.7rem;
+.inclusionPreviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.inclusionPreviewType {
+  font-size: 11px;
+  line-height: 16px;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
-.panePreviewList li span:last-child {
-  font-size: 0.82rem;
-  color: var(--color-text-subtle);
+.inclusionPreviewCadence {
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.inclusionPreviewDetail {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--color-text-primary);
   white-space: normal;
   overflow-wrap: anywhere;
-  line-height: 1.35;
 }
 
 .serviceSelectorCard {
-  border: 1px solid var(--color-border-soft);
+  border: 1px solid var(--color-stroke-default);
   border-radius: 0.62rem;
-  background: var(--color-surface);
+  background: var(--color-fill-primary);
   overflow: hidden;
 }
 
+.serviceSelectorCard > .rowLabel {
+  margin: 0;
+  padding: 0.8rem 0.8rem 0;
+}
+
 .serviceModalControls {
-  padding: 0.7rem;
-  border-bottom: 1px solid var(--color-border-soft);
+  padding: 0.7rem 0.8rem 0.8rem;
+  border-bottom: 1px solid var(--color-stroke-default);
 }
 
 .serviceModalControls input {
   width: 100%;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-stroke-strong);
   border-radius: 0.56rem;
   padding: 0.56rem 0.62rem;
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: var(--color-fill-primary);
+  color: var(--color-text-primary);
 }
 
 .categoryTree {
@@ -554,7 +622,7 @@
 }
 
 .categoryBlock {
-  border-bottom: 1px solid var(--color-border-soft);
+  border-bottom: 1px solid var(--color-stroke-default);
 }
 
 .categoryBlock:last-child {
@@ -572,7 +640,7 @@
 .expandButton {
   border: none;
   background: transparent;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   width: 18px;
   padding: 0;
 }
@@ -580,14 +648,14 @@
 .categoryLabelWrap p {
   margin: 0;
   font-size: 0.87rem;
-  color: var(--color-text);
+  color: var(--color-text-primary);
 }
 
 .categoryLabelWrap span {
   display: block;
   margin-top: 0.08rem;
   font-size: 0.74rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .productList {
@@ -608,27 +676,139 @@
 .productLabelWrap p {
   margin: 0;
   font-size: 0.84rem;
-  color: var(--color-text-subtle);
+  color: var(--color-text-tertiary);
 }
 
 .productLabelWrap span {
   display: block;
   margin-top: 0.05rem;
   font-size: 0.74rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 }
 
 .selectionCount {
   margin: 0;
-  border-top: 1px solid var(--color-border-soft);
+  border-top: 1px solid var(--color-stroke-default);
   padding: 0.55rem 0.75rem;
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
   font-size: 0.78rem;
+}
+
+.perkPicker {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: 0.62rem;
+  background: var(--color-fill-primary);
+  overflow: hidden;
+}
+
+.perkPickerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.75rem 0;
+}
+
+.perkPickerMeta {
+  font-size: 0.76rem;
+  color: var(--color-text-secondary);
+}
+
+.inlinePerkCreator {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.55rem;
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid var(--color-stroke-default);
+}
+
+.inlinePerkCreator input {
+  width: 100%;
+  border: 1px solid var(--color-stroke-strong);
+  border-radius: 0.56rem;
+  padding: 0.56rem 0.62rem;
+  background: var(--color-fill-primary);
+  color: var(--color-text-primary);
+}
+
+.inlinePerkAddButton {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: 999px;
+  background: var(--color-fill-secondary);
+  color: var(--color-text-primary);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 0.8rem;
+}
+
+.inlinePerkAddButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.perkOptionList {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0.35rem 0.4rem 0.45rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.perkOptionRow {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.48rem 0.45rem;
+  border-radius: 0.5rem;
+  background: var(--color-fill-primary);
+}
+
+.perkOptionLabel {
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+}
+
+.selectedPerkWrap {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.selectedPerkList {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.selectedPerkCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--color-stroke-default);
+  border-radius: 0.62rem;
+  background: var(--color-fill-primary);
+  padding: 0.58rem 0.7rem;
+  font-size: 0.84rem;
+  color: var(--color-text-primary);
+}
+
+.selectedPerkRemove {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-fill-secondary);
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 /* Paper style alignment shared with homepage */
 .page {
-  background: var(--component-bg-page);
+  background: var(--color-fill-brand-secondary);
   padding: var(--space-24);
 }
 
@@ -639,10 +819,10 @@
 
 .formColumn,
 .previewCard {
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-lg);
-  background: var(--component-bg-surface);
-  box-shadow: var(--component-shadow-surface);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-24);
+  background: var(--color-fill-primary);
+  box-shadow: 0 16px 32px -4px rgba(12, 12, 13, 0.08), 0 4px 8px -4px rgba(12, 12, 13, 0.04);
 }
 
 .formColumn {
@@ -650,15 +830,15 @@
 }
 
 .section {
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-md);
-  background: var(--component-bg-surface);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-12);
+  background: var(--color-fill-primary);
   padding: 16px;
   margin-top: 12px;
 }
 
 .section h2 {
-  color: var(--component-text-primary);
+  color: var(--color-text-primary);
   font-size: 18px;
   line-height: 24px;
 }
@@ -667,14 +847,14 @@
 .previewDescription,
 .previewLabel,
 .previewMeta dt {
-  color: var(--component-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .field,
 .fieldFull,
 .fieldInline,
 .rowLabel {
-  color: var(--component-text-tertiary);
+  color: var(--color-text-tertiary);
 }
 
 .field input,
@@ -682,52 +862,52 @@
 .fieldFull textarea,
 .fieldInline input,
 .serviceModalControls input {
-  border-color: var(--component-border-default);
-  border-radius: var(--component-radius-sm);
-  background: var(--component-bg-surface);
-  color: var(--component-text-primary);
+  border-color: var(--color-stroke-default);
+  border-radius: var(--space-8);
+  background: var(--color-fill-primary);
+  color: var(--color-text-primary);
 }
 
 .inclusionsTableWrap {
-  border-color: var(--component-border-default);
-  border-radius: var(--component-radius-md);
-  background: var(--component-bg-surface);
+  border-color: var(--color-stroke-default);
+  border-radius: var(--space-12);
+  background: var(--color-fill-primary);
 }
 
 .inclusionsTable th {
-  border-bottom-color: var(--component-border-default);
-  background: var(--component-bg-muted);
-  color: var(--component-text-tertiary);
+  border-bottom-color: var(--color-stroke-default);
+  background: var(--color-fill-secondary);
+  color: var(--color-text-tertiary);
   letter-spacing: 0.6px;
 }
 
 .inclusionsTable td {
-  border-bottom-color: var(--component-border-default);
+  border-bottom-color: var(--color-stroke-default);
 }
 
 .ghostAction,
 .cancelButton,
 .removeButton,
 .closePanel {
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-sm);
-  background: var(--component-bg-muted);
-  color: var(--component-text-tertiary);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-8);
+  background: var(--color-fill-secondary);
+  color: var(--color-text-tertiary);
 }
 
 .publishButton,
 .panelPrimary,
 .toggleOn,
 .panelTabActive {
-  border: 1px solid var(--component-action-bg);
-  background: var(--component-action-bg);
-  color: var(--component-action-text);
+  border: 1px solid var(--color-fill-brand-primary);
+  background: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
 }
 
 .publishButton,
 .panelPrimary {
-  border-radius: var(--component-radius-sm);
-  box-shadow: var(--component-shadow-action);
+  border-radius: var(--space-8);
+  box-shadow: 0 12px 24px -12px rgba(14, 66, 51, 0.15);
 }
 
 .toggleRow,
@@ -737,8 +917,8 @@
 .serviceSelectorCard,
 .panePreviewList li,
 .sidePanel {
-  border-color: var(--component-border-default);
-  background: var(--component-bg-surface);
+  border-color: var(--color-stroke-default);
+  background: var(--color-fill-primary);
 }
 
 .panelOverlay {

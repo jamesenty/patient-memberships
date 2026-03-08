@@ -1,16 +1,16 @@
 .page {
   min-height: 100vh;
-  background-color: var(--component-bg-page);
+  background-color: var(--color-fill-brand-secondary);
   padding: var(--space-24);
 }
 
 .surface {
   width: min(1300px, 100%);
   margin: 0 auto;
-  background-color: var(--component-bg-surface);
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-lg);
-  box-shadow: var(--component-shadow-surface);
+  background-color: var(--color-fill-primary);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-24);
+  box-shadow: 0 16px 32px -4px rgba(12, 12, 13, 0.08), 0 4px 8px -4px rgba(12, 12, 13, 0.04);
   display: flex;
   flex-direction: column;
   gap: var(--space-24);
@@ -26,38 +26,38 @@
 
 .header h1 {
   margin: 0 0 8px;
-  color: #232323;
+  color: var(--color-text-primary);
   font-size: 28px;
   line-height: 36px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .header p {
   margin: 0;
-  color: var(--component-text-secondary);
+  color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 20px;
 }
 
 .ctaButton {
-  height: var(--component-control-height-md);
+  height: 40px;
   padding: 0 var(--space-16);
-  border-radius: var(--component-radius-sm);
-  border: 1px solid var(--component-action-bg);
-  background-color: var(--component-action-bg);
-  color: var(--component-action-text);
+  border-radius: var(--space-8);
+  border: 1px solid var(--color-fill-brand-primary);
+  background-color: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
   font-size: 14px;
   line-height: 20px;
-  font-weight: 500;
+  font-weight: 600;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  box-shadow: var(--component-shadow-action);
+  box-shadow: 0 12px 24px -12px rgba(14, 66, 51, 0.15);
 }
 
 .ctaButton:hover {
-  background-color: var(--component-action-bg-pressed);
+  background-color: var(--color-fill-brand-primary-pressed);
 }
 
 .metaRow {
@@ -73,10 +73,10 @@
 }
 
 .tableWrap {
-  border: 1px solid var(--component-border-default);
-  border-radius: var(--component-radius-md);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-12);
   overflow: auto;
-  background-color: var(--component-bg-surface);
+  background-color: var(--color-fill-primary);
 }
 
 .table {
@@ -89,9 +89,9 @@
   height: 38px;
   padding: 0 14px;
   text-align: left;
-  border-bottom: 1px solid var(--component-border-default);
-  color: var(--component-text-tertiary);
-  background-color: var(--component-bg-muted);
+  border-bottom: 1px solid var(--color-stroke-default);
+  color: var(--color-text-tertiary);
+  background-color: var(--color-fill-secondary);
   font-size: 12px;
   line-height: 16px;
   letter-spacing: 0.6px;
@@ -102,9 +102,13 @@
 
 .table td {
   padding: 12px 14px;
-  border-bottom: 1px solid var(--component-border-default);
+  border-bottom: 1px solid var(--color-stroke-default);
   vertical-align: top;
-  color: var(--component-text-primary);
+  color: var(--color-text-primary);
+}
+
+.inactiveRow td {
+  background-color: var(--color-fill-secondary);
 }
 
 .table tbody tr:last-child td {
@@ -164,18 +168,18 @@
 }
 
 .tierDotGold {
-  background-color: #ffc72e;
-  border-color: #e8b52a;
+  background-color: var(--color-yellow-500);
+  border-color: var(--color-yellow-600);
 }
 
 .tierDotSilver {
-  background-color: #75b6e1;
-  border-color: #4790b9;
+  background-color: var(--color-sky-500);
+  border-color: var(--color-blue-400);
 }
 
 .tierDotBronze {
-  background-color: #ebaf64;
-  border-color: #e29534;
+  background-color: var(--color-orange-500);
+  border-color: var(--color-orange-800);
 }
 
 .statusPill {
@@ -192,15 +196,15 @@
 }
 
 .statusActive {
-  background-color: #ebf7ed;
-  border-color: #a2cec0;
-  color: #256a54;
+  background-color: var(--color-fill-success-weak);
+  border-color: var(--color-stroke-success-secondary);
+  color: var(--color-text-success);
 }
 
 .statusInactive {
-  background-color: #f9ebeb;
-  border-color: #eec2c2;
-  color: #8d2929;
+  background-color: var(--color-fill-danger-weak);
+  border-color: var(--color-stroke-error-secondary);
+  color: var(--color-red-700);
 }
 
 .dotList {
@@ -213,7 +217,7 @@
 }
 
 .dotList li {
-  color: #636363;
+  color: var(--color-text-tertiary);
   font-size: 14px;
   line-height: 20px;
 }
@@ -223,7 +227,7 @@
 }
 
 .numeric {
-  color: #232323;
+  color: var(--color-text-primary);
   font-size: 16px;
   line-height: 24px;
   padding-top: 4px;
@@ -237,22 +241,51 @@
   padding-top: 2px;
 }
 
-.actionButton {
-  width: 28px;
-  height: 28px;
+.actionPill {
+  height: 30px;
+  padding: 0 10px;
   border-radius: 8px;
-  border: 1px solid #d1ece5;
-  background-color: #f5fbf9;
-  color: #0e4233;
-  display: inline-flex;
+  border: 1px solid var(--color-brand-secondary-200);
+  background-color: var(--color-brand-secondary-50);
+  color: var(--color-icon-brand);
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  gap: 6px;
+  font-size: 13px;
   line-height: 16px;
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.actionButton:hover {
-  background-color: #ebf7ed;
+.actionPill:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.actionPillPause {
+  border-color: var(--color-brand-secondary-200);
+  background-color: var(--color-brand-secondary-50);
+  color: var(--color-icon-brand);
+}
+
+.actionPillResume {
+  border-color: var(--color-stroke-info);
+  background-color: var(--color-fill-info-weak);
+  color: var(--color-text-info);
+}
+
+.actionPill:hover {
+  background-color: var(--color-fill-success-weak);
+}
+
+.actionPillResume:hover {
+  background-color: var(--color-blue-50);
+}
+
+.actionIcon {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .srOnly {
@@ -264,6 +297,100 @@
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--color-fill-overlay);
+}
+
+.confirmCard {
+  width: min(440px, 100%);
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-16);
+  background: var(--color-fill-primary);
+  box-shadow: 0 20px 40px -12px rgba(12, 12, 13, 0.18);
+  padding: 20px;
+  display: grid;
+  gap: 16px;
+}
+
+.confirmHeader {
+  display: grid;
+  gap: 6px;
+}
+
+.confirmEyebrow {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.confirmHeader h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.confirmText {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.confirmMeta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.confirmMeta span {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: 999px;
+  background: var(--color-fill-secondary);
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-tertiary);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.confirmSecondary,
+.confirmPrimary {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--space-8);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.confirmSecondary {
+  border: 1px solid var(--color-stroke-default);
+  background: var(--color-fill-secondary);
+  color: var(--color-text-tertiary);
+}
+
+.confirmPrimary {
+  border: 1px solid var(--color-fill-brand-primary);
+  background: var(--color-fill-brand-primary);
+  color: var(--color-text-inverse);
 }
 
 @media (max-width: 1360px) {

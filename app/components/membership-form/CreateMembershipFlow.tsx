@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Checkbox } from "../ui/Checkbox";
 import { SegmentedToggle } from "../ui/SegmentedToggle";
 import {
@@ -16,8 +16,8 @@ import {
 import styles from "./create-membership.module.css";
 
 type Frequency = "Weekly" | "Monthly" | "Quarterly" | "Annual";
-type BillingDate = "Membership start date" | "Start of month + pro-rata";
 type Duration = "ongoing" | "timebound";
+type MembershipFlowMode = "create" | "edit";
 
 type ServiceSelectionOption = {
   id: string;
@@ -55,22 +55,38 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-export function CreateMembershipFlow() {
-  const [membershipName, setMembershipName] = useState("Gold Tier");
-  const [description, setDescription] = useState(
-    "Premium plan for patients booking injectables and skin treatments on a regular cadence.",
-  );
-  const [price, setPrice] = useState("349");
-  const [frequency, setFrequency] = useState<Frequency>("Monthly");
-  const [billingDate, setBillingDate] = useState<BillingDate>("Membership start date");
-  const [salesTax, setSalesTax] = useState(true);
-  const [duration, setDuration] = useState<Duration>("ongoing");
-  const [durationMonths, setDurationMonths] = useState("12");
-  const [minimumCommitment, setMinimumCommitment] = useState("3");
-  const [noticePeriod, setNoticePeriod] = useState("30");
-  const [cancellationFee, setCancellationFee] = useState("99");
+export type MembershipFlowInitialData = {
+  membershipName: string;
+  description: string;
+  price: string;
+  frequency: Frequency;
+  salesTax: boolean;
+  duration: Duration;
+  durationMonths: string;
+  minimumCommitment: string;
+  noticePeriod: string;
+  cancellationFee: string;
+  inclusions: MembershipInclusion[];
+};
 
-  const [inclusions, setInclusions] = useState<MembershipInclusion[]>([
+type CreateMembershipFlowProps = {
+  mode?: MembershipFlowMode;
+  initialData?: MembershipFlowInitialData;
+  backHref?: string;
+};
+
+const defaultInitialData = (): MembershipFlowInitialData => ({
+  membershipName: "Gold Tier",
+  description: "Premium plan for patients booking injectables and skin treatments on a regular cadence.",
+  price: "349",
+  frequency: "Monthly",
+  salesTax: true,
+  duration: "ongoing",
+  durationMonths: "12",
+  minimumCommitment: "3",
+  noticePeriod: "30",
+  cancellationFee: "99",
+  inclusions: [
     {
       id: generateId("service"),
       kind: "service",
@@ -99,7 +115,31 @@ export function CreateMembershipFlow() {
       amountType: "percent",
       amount: 10,
     },
-  ]);
+  ],
+});
+
+export function CreateMembershipFlow({
+  mode = "create",
+  initialData,
+  backHref = "/",
+}: CreateMembershipFlowProps) {
+  const resolvedInitialData = useMemo(
+    () => initialData ?? defaultInitialData(),
+    [initialData],
+  );
+
+  const [membershipName, setMembershipName] = useState(resolvedInitialData.membershipName);
+  const [description, setDescription] = useState(resolvedInitialData.description);
+  const [price, setPrice] = useState(resolvedInitialData.price);
+  const [frequency, setFrequency] = useState<Frequency>(resolvedInitialData.frequency);
+  const [salesTax, setSalesTax] = useState(resolvedInitialData.salesTax);
+  const [duration, setDuration] = useState<Duration>(resolvedInitialData.duration);
+  const [durationMonths, setDurationMonths] = useState(resolvedInitialData.durationMonths);
+  const [minimumCommitment, setMinimumCommitment] = useState(resolvedInitialData.minimumCommitment);
+  const [noticePeriod, setNoticePeriod] = useState(resolvedInitialData.noticePeriod);
+  const [cancellationFee, setCancellationFee] = useState(resolvedInitialData.cancellationFee);
+
+  const [inclusions, setInclusions] = useState<MembershipInclusion[]>(resolvedInitialData.inclusions);
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [panelKind, setPanelKind] = useState<InclusionKind>("service");
@@ -110,6 +150,8 @@ export function CreateMembershipFlow() {
   const [selectedServiceOptionId, setSelectedServiceOptionId] = useState<string | null>(
     "specific:botox-15-units",
   );
+  const [discountSelectionSearch, setDiscountSelectionSearch] = useState("");
+  const [selectedDiscountOptionIds, setSelectedDiscountOptionIds] = useState<string[]>([]);
 
   const [serviceQuantity, setServiceQuantity] = useState("1");
   const [serviceUnit, setServiceUnit] = useState<"units" | "session">("session");
@@ -117,13 +159,12 @@ export function CreateMembershipFlow() {
     "Every month",
   );
 
-  const [discountAppliesTo, setDiscountAppliesTo] = useState<"all" | "category" | "specific">("all");
-  const [discountCategory, setDiscountCategory] = useState(serviceCategories[0]);
-  const [discountServiceId, setDiscountServiceId] = useState(serviceCatalog[0].id);
   const [discountAmountType, setDiscountAmountType] = useState<"percent" | "fixed">("percent");
   const [discountAmount, setDiscountAmount] = useState("10");
 
-  const [perkLabel, setPerkLabel] = useState(perkLibrary[0]);
+  const [availablePerks, setAvailablePerks] = useState(perkLibrary);
+  const [selectedPerkLabels, setSelectedPerkLabels] = useState<string[]>([]);
+  const [customPerkLabel, setCustomPerkLabel] = useState("");
   const [perkCadence, setPerkCadence] = useState<"Always" | "Monthly" | "Quarterly">("Always");
 
   const serviceSelectionOptions = useMemo<ServiceSelectionOption[]>(() => {
@@ -194,8 +235,69 @@ export function CreateMembershipFlow() {
       ? "No service selected"
       : selectedServiceOption?.label ?? "No service selected";
 
-  const selectedDiscountService =
-    serviceCatalog.find((item) => item.id === discountServiceId) ?? serviceCatalog[0];
+  const filteredDiscountCategoryGroups = useMemo<ServiceCategoryGroup[]>(() => {
+    const search = discountSelectionSearch.trim().toLowerCase();
+
+    return serviceCategories
+      .map((category) => {
+        const products = serviceCatalog
+          .filter((item) => item.category === category)
+          .map((item) => ({
+            id: item.id,
+            optionId: `specific:${item.id}`,
+            name: item.name,
+            price: item.price,
+          }));
+
+        if (!search) {
+          return {
+            category,
+            categoryOptionId: `category:${category}`,
+            products,
+          };
+        }
+
+        const categoryMatches = category.toLowerCase().includes(search);
+        const matchingProducts = products.filter((item) => item.name.toLowerCase().includes(search));
+
+        if (!categoryMatches && matchingProducts.length === 0) {
+          return null;
+        }
+
+        return {
+          category,
+          categoryOptionId: `category:${category}`,
+          products: categoryMatches ? products : matchingProducts,
+        };
+      })
+      .filter((group): group is ServiceCategoryGroup => group !== null);
+  }, [discountSelectionSearch]);
+
+  const selectedDiscountOptions = useMemo(() => {
+    const allOption = {
+      id: "all",
+      label: "All treatments and products",
+      type: "all" as const,
+    };
+
+    return selectedDiscountOptionIds
+      .map((optionId) => {
+        if (optionId === "all") {
+          return allOption;
+        }
+
+        return serviceSelectionOptions.find((option) => option.id === optionId) ?? null;
+      })
+      .filter((option): option is typeof allOption | ServiceSelectionOption => option !== null);
+  }, [selectedDiscountOptionIds, serviceSelectionOptions]);
+  const selectedDiscountCount = selectedDiscountOptions.length;
+  const selectedDiscountPreview =
+    selectedDiscountCount === 0
+      ? "No discount target selected"
+      : selectedDiscountOptions.map((option) => option.label).join(", ");
+  const selectedPerkCount = selectedPerkLabels.length;
+  const selectedPerkPreview =
+    selectedPerkCount === 0 ? "No perks selected" : selectedPerkLabels.join(", ");
 
   const previewPrice = useMemo(() => {
     if (!price) {
@@ -204,6 +306,13 @@ export function CreateMembershipFlow() {
 
     return formatCurrency(Number(price));
   }, [price]);
+
+  const isEditMode = mode === "edit";
+  const pageTitle = isEditMode ? "Edit Membership" : "Create Membership";
+  const pageDescription = isEditMode
+    ? "Update inclusions, pricing terms, cancellation rules, and publish changes when ready."
+    : "Define inclusions, pricing terms, cancellation rules, and publish when ready.";
+  const submitLabel = isEditMode ? "Update Offer" : "Publish Offer";
 
   const inclusionCounts = useMemo(
     () => ({
@@ -224,6 +333,21 @@ export function CreateMembershipFlow() {
     setEditingInclusionId(null);
     setIsPanelOpen(false);
   };
+
+  useEffect(() => {
+    if (!isPanelOpen) {
+      return;
+    }
+
+    const { body } = document;
+    const previousOverflow = body.style.overflow;
+
+    body.style.overflow = "hidden";
+
+    return () => {
+      body.style.overflow = previousOverflow;
+    };
+  }, [isPanelOpen]);
 
   const upsertInclusion = (next: MembershipInclusion, closePanelOnComplete = true) => {
     setInclusions((current) => {
@@ -269,47 +393,71 @@ export function CreateMembershipFlow() {
   };
 
   const addDiscountInclusion = () => {
+    if (selectedDiscountOptions.length === 0) {
+      return;
+    }
+
     const isEditing = Boolean(editingInclusionId);
-    const targetLabel =
-      discountAppliesTo === "all"
-        ? "All treatments and products"
-        : discountAppliesTo === "category"
-          ? `${discountCategory} category`
-          : selectedDiscountService.name;
+    const buildDiscountInclusion = (
+      option: (typeof selectedDiscountOptions)[number],
+    ): MembershipInclusion => ({
+      id: generateId("discount"),
+      kind: "discount",
+      appliesTo:
+        option.id === "all" ? "all" : option.type === "category" ? "category" : "specific",
+      targetLabel:
+        option.id === "all"
+          ? "All treatments and products"
+          : option.type === "category"
+            ? `${option.label} category`
+            : option.label,
+      amountType: discountAmountType,
+      amount: Number(discountAmount) || 0,
+    });
 
-    upsertInclusion(
-      {
-        id: generateId("discount"),
-        kind: "discount",
-        appliesTo: discountAppliesTo,
-        targetLabel,
-        amountType: discountAmountType,
-        amount: Number(discountAmount) || 0,
-      },
-      isEditing,
-    );
+    if (isEditing) {
+      upsertInclusion(buildDiscountInclusion(selectedDiscountOptions[0]), true);
+    } else {
+      setInclusions((current) => [...current, ...selectedDiscountOptions.map(buildDiscountInclusion)]);
+    }
 
-    setDiscountAppliesTo("all");
-    setDiscountCategory(serviceCategories[0]);
-    setDiscountServiceId(serviceCatalog[0].id);
+    setEditingInclusionId(null);
+    if (isEditing) {
+      setIsPanelOpen(false);
+    }
+
+    setSelectedDiscountOptionIds([]);
+    setDiscountSelectionSearch("");
     setDiscountAmountType("percent");
     setDiscountAmount("10");
   };
 
   const addPerkInclusion = () => {
+    if (selectedPerkLabels.length === 0) {
+      return;
+    }
+
     const isEditing = Boolean(editingInclusionId);
+    const buildPerkInclusion = (label: string): MembershipInclusion => ({
+      id: generateId("perk"),
+      kind: "perk",
+      label,
+      cadence: perkCadence,
+    });
 
-    upsertInclusion(
-      {
-        id: generateId("perk"),
-        kind: "perk",
-        label: perkLabel,
-        cadence: perkCadence,
-      },
-      isEditing,
-    );
+    if (isEditing) {
+      upsertInclusion(buildPerkInclusion(selectedPerkLabels[0]), true);
+    } else {
+      setInclusions((current) => [...current, ...selectedPerkLabels.map(buildPerkInclusion)]);
+    }
 
-    setPerkLabel(perkLibrary[0]);
+    setEditingInclusionId(null);
+    if (isEditing) {
+      setIsPanelOpen(false);
+    }
+
+    setSelectedPerkLabels([]);
+    setCustomPerkLabel("");
     setPerkCadence("Always");
   };
 
@@ -334,6 +482,60 @@ export function CreateMembershipFlow() {
     setServiceSelectionSearch("");
   };
 
+  const toggleDiscountSelection = (optionId: string) => {
+    setSelectedDiscountOptionIds((current) => {
+      if (editingInclusionId) {
+        return current.includes(optionId) ? [] : [optionId];
+      }
+
+      if (optionId === "all") {
+        return current.includes("all") ? [] : ["all"];
+      }
+
+      const withoutAll = current.filter((entry) => entry !== "all");
+      return withoutAll.includes(optionId)
+        ? withoutAll.filter((entry) => entry !== optionId)
+        : [...withoutAll, optionId];
+    });
+  };
+
+  const clearDiscountSelection = () => {
+    setSelectedDiscountOptionIds([]);
+    setDiscountSelectionSearch("");
+  };
+
+  const togglePerkSelection = (label: string) => {
+    setSelectedPerkLabels((current) => {
+      if (editingInclusionId) {
+        return current.includes(label) ? [] : [label];
+      }
+
+      return current.includes(label)
+        ? current.filter((entry) => entry !== label)
+        : [...current, label];
+    });
+  };
+
+  const removeSelectedPerk = (label: string) => {
+    setSelectedPerkLabels((current) => current.filter((entry) => entry !== label));
+  };
+
+  const addCustomPerkOption = () => {
+    const nextLabel = customPerkLabel.trim();
+
+    if (!nextLabel) {
+      return;
+    }
+
+    setAvailablePerks((current) =>
+      current.some((entry) => entry.toLowerCase() === nextLabel.toLowerCase()) ? current : [...current, nextLabel],
+    );
+    setSelectedPerkLabels((current) =>
+      current.some((entry) => entry.toLowerCase() === nextLabel.toLowerCase()) ? current : [...current, nextLabel],
+    );
+    setCustomPerkLabel("");
+  };
+
   const startEditInclusion = (inclusion: MembershipInclusion) => {
     setEditingInclusionId(inclusion.id);
     setPanelKind(inclusion.kind);
@@ -356,29 +558,40 @@ export function CreateMembershipFlow() {
     }
 
     if (inclusion.kind === "discount") {
-      setDiscountAppliesTo(inclusion.appliesTo);
       setDiscountAmountType(inclusion.amountType);
       setDiscountAmount(String(inclusion.amount));
+
+      if (inclusion.appliesTo === "all") {
+        setSelectedDiscountOptionIds(["all"]);
+        setDiscountSelectionSearch("");
+        return;
+      }
 
       if (inclusion.appliesTo === "category") {
         const category = serviceCategories.find((entry) =>
           inclusion.targetLabel.toLowerCase().startsWith(entry.toLowerCase()),
         );
         if (category) {
-          setDiscountCategory(category);
+          setSelectedDiscountOptionIds([`category:${category}`]);
+          setDiscountSelectionSearch("");
         }
+        return;
       }
 
       if (inclusion.appliesTo === "specific") {
         const service = serviceCatalog.find((entry) => entry.name === inclusion.targetLabel);
         if (service) {
-          setDiscountServiceId(service.id);
+          setSelectedDiscountOptionIds([`specific:${service.id}`]);
+          setDiscountSelectionSearch("");
         }
       }
       return;
     }
 
-    setPerkLabel(inclusion.label);
+    setSelectedPerkLabels([inclusion.label]);
+    setAvailablePerks((current) =>
+      current.includes(inclusion.label) ? current : [...current, inclusion.label],
+    );
     setPerkCadence(inclusion.cadence);
   };
 
@@ -388,11 +601,12 @@ export function CreateMembershipFlow() {
         <div className={styles.formColumn}>
           <header className={styles.pageHeader}>
             <div>
-              <Link className={styles.backLink} href="/">
-                Memberships
+              <Link className={styles.backLink} href={backHref}>
+                <span aria-hidden="true">←</span>
+                <span>Back to memberships</span>
               </Link>
-              <h1>Create Membership</h1>
-              <p>Define inclusions, pricing terms, cancellation rules, and publish when ready.</p>
+              <h1>{pageTitle}</h1>
+              <p>{pageDescription}</p>
             </div>
           </header>
 
@@ -428,12 +642,15 @@ export function CreateMembershipFlow() {
 
             <div className={styles.inclusionToolbar}>
               <button type="button" className={styles.ghostAction} onClick={() => openPanel("service")}>
+                <span aria-hidden="true">＋</span>
                 Add Service
               </button>
               <button type="button" className={styles.ghostAction} onClick={() => openPanel("discount")}>
+                <span aria-hidden="true">＋</span>
                 Add Discount
               </button>
               <button type="button" className={styles.ghostAction} onClick={() => openPanel("perk")}>
+                <span aria-hidden="true">＋</span>
                 Add Perk
               </button>
             </div>
@@ -518,28 +735,23 @@ export function CreateMembershipFlow() {
                   <option>Annual</option>
                 </select>
               </label>
-              <label className={styles.field}>
-                Billing Date
-                <select
-                  value={billingDate}
-                  onChange={(event) => setBillingDate(event.target.value as BillingDate)}
-                >
-                  <option>Membership start date</option>
-                  <option>Start of month + pro-rata</option>
-                </select>
-              </label>
-            </div>
-
-            <div className={styles.toggleRow}>
-              <span>Apply Sales Tax</span>
-              <button
-                type="button"
-                className={salesTax ? styles.toggleOn : styles.toggleOff}
-                onClick={() => setSalesTax((current) => !current)}
-                aria-label="Toggle sales tax"
-              >
-                <span />
-              </button>
+              <div className={`${styles.field} ${styles.toggleField}`}>
+                <span>Apply Sales Tax</span>
+                <div className={styles.toggleFieldControl}>
+                  <span className={styles.toggleFieldStatus}>
+                    {salesTax ? "Sales Tax enabled" : "Sales Tax disabled"}
+                  </span>
+                  <button
+                    type="button"
+                    className={salesTax ? styles.toggleOn : styles.toggleOff}
+                    onClick={() => setSalesTax((current) => !current)}
+                    aria-label="Toggle sales tax"
+                    aria-pressed={salesTax}
+                  >
+                    <span />
+                  </button>
+                </div>
+              </div>
             </div>
 
             <div className={styles.durationWrap}>
@@ -614,7 +826,7 @@ export function CreateMembershipFlow() {
               Cancel
             </Link>
             <button className={styles.publishButton} type="submit">
-              Publish Offer
+              {submitLabel}
             </button>
           </footer>
         </div>
@@ -632,8 +844,8 @@ export function CreateMembershipFlow() {
                 </dd>
               </div>
               <div>
-                <dt>Billing</dt>
-                <dd>{billingDate}</dd>
+                <dt>Sales Tax</dt>
+                <dd>{salesTax ? "Applied" : "Not applied"}</dd>
               </div>
               <div>
                 <dt>Duration</dt>
@@ -669,271 +881,408 @@ export function CreateMembershipFlow() {
                 setEditingInclusionId(null);
               }}
             />
-
-            {panelKind === "service" ? (
-              <div className={styles.panelBody}>
-                <div className={styles.serviceSelectorCard}>
-                  <p className={styles.rowLabel}>Select categories or treatments</p>
-                  <div className={styles.serviceModalControls}>
-                    <input
-                      value={serviceSelectionSearch}
-                      onChange={(event) => setServiceSelectionSearch(event.target.value)}
-                      placeholder="Search by name"
-                    />
-                  </div>
-
-                  <div className={styles.categoryTree}>
-                    {filteredCategoryGroups.map((group) => {
-                      const isCategorySelected = selectedServiceOptionId === group.categoryOptionId;
-                      const isExpanded =
-                        serviceSelectionSearch.trim().length > 0 || expandedCategories.includes(group.category);
-
-                      return (
-                        <div className={styles.categoryBlock} key={group.category}>
-                          <div className={styles.categoryRow}>
-                            <button
-                              type="button"
-                              className={styles.expandButton}
-                              onClick={() => toggleCategoryExpanded(group.category)}
-                              aria-label={`Toggle ${group.category}`}
-                            >
-                              {isExpanded ? "▾" : "▸"}
-                            </button>
-                            <Checkbox
-                              checked={isCategorySelected}
-                              ariaLabel={`Select ${group.category}`}
-                              onChange={() => toggleServiceSelection(group.categoryOptionId)}
-                            />
-                            <div className={styles.categoryLabelWrap}>
-                              <p>{group.category}</p>
-                              <span>Category inclusion</span>
-                            </div>
-                          </div>
-
-                          {isExpanded ? (
-                            <ul className={styles.productList}>
-                              {group.products.map((product) => {
-                                const isProductSelected = selectedServiceOptionId === product.optionId;
-
-                                return (
-                                  <li key={product.id} className={styles.productRow}>
-                                    <span />
-                                    <Checkbox
-                                      checked={isProductSelected}
-                                      ariaLabel={`Select ${product.name}`}
-                                      onChange={() => toggleServiceSelection(product.optionId)}
-                                    />
-                                    <div className={styles.productLabelWrap}>
-                                      <p>{product.name}</p>
-                                      <span>{formatCurrency(product.price)}</span>
-                                    </div>
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          ) : null}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className={styles.selectionCount}>{selectedServiceCount} selected</p>
-                </div>
-
-                <p className={styles.selectionInline}>
-                  <strong>{selectedServiceCount} selected:</strong> {selectedServicePreview}
-                </p>
-                <div className={styles.selectionActions}>
-                  <button
-                    type="button"
-                    className={styles.clearSelectionButton}
-                    onClick={clearServiceSelection}
-                    disabled={selectedServiceCount === 0}
-                  >
-                    Clear selection
-                  </button>
-                </div>
-
-                <div className={selectedServiceCount === 0 ? styles.configDisabled : styles.configEnabled}>
-                  <div className={styles.fieldGridTwo}>
-                    <label className={styles.field}>
-                      Quantity
+            <div className={styles.panelScrollArea}>
+              {panelKind === "service" ? (
+                <div className={styles.panelBody}>
+                  <div className={styles.serviceSelectorCard}>
+                    <p className={styles.rowLabel}>Select categories or treatments</p>
+                    <div className={styles.serviceModalControls}>
                       <input
-                        type="number"
-                        min="1"
-                        value={serviceQuantity}
-                        onChange={(event) => setServiceQuantity(event.target.value)}
-                        disabled={selectedServiceCount === 0}
+                        value={serviceSelectionSearch}
+                        onChange={(event) => setServiceSelectionSearch(event.target.value)}
+                        placeholder="Search by name"
                       />
-                    </label>
+                    </div>
+
+                    <div className={styles.categoryTree}>
+                      {filteredCategoryGroups.map((group) => {
+                        const isCategorySelected = selectedServiceOptionId === group.categoryOptionId;
+                        const isExpanded =
+                          serviceSelectionSearch.trim().length > 0 || expandedCategories.includes(group.category);
+
+                        return (
+                          <div className={styles.categoryBlock} key={group.category}>
+                            <div className={styles.categoryRow}>
+                              <button
+                                type="button"
+                                className={styles.expandButton}
+                                onClick={() => toggleCategoryExpanded(group.category)}
+                                aria-label={`Toggle ${group.category}`}
+                              >
+                                {isExpanded ? "▾" : "▸"}
+                              </button>
+                              <Checkbox
+                                checked={isCategorySelected}
+                                ariaLabel={`Select ${group.category}`}
+                                onChange={() => toggleServiceSelection(group.categoryOptionId)}
+                              />
+                              <div className={styles.categoryLabelWrap}>
+                                <p>{group.category}</p>
+                                <span>Category inclusion</span>
+                              </div>
+                            </div>
+
+                            {isExpanded ? (
+                              <ul className={styles.productList}>
+                                {group.products.map((product) => {
+                                  const isProductSelected = selectedServiceOptionId === product.optionId;
+
+                                  return (
+                                    <li key={product.id} className={styles.productRow}>
+                                      <span />
+                                      <Checkbox
+                                        checked={isProductSelected}
+                                        ariaLabel={`Select ${product.name}`}
+                                        onChange={() => toggleServiceSelection(product.optionId)}
+                                      />
+                                      <div className={styles.productLabelWrap}>
+                                        <p>{product.name}</p>
+                                        <span>{formatCurrency(product.price)}</span>
+                                      </div>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className={styles.selectionCount}>{selectedServiceCount} selected</p>
+                  </div>
+
+                  <p className={styles.selectionInline}>
+                    <strong>{selectedServiceCount} selected:</strong> {selectedServicePreview}
+                  </p>
+                  <div className={styles.selectionActions}>
+                    <button
+                      type="button"
+                      className={styles.clearSelectionButton}
+                      onClick={clearServiceSelection}
+                      disabled={selectedServiceCount === 0}
+                    >
+                      Clear selection
+                    </button>
+                  </div>
+
+                  <div className={selectedServiceCount === 0 ? styles.configDisabled : styles.configEnabled}>
+                    <div className={styles.fieldGridTwo}>
+                      <label className={styles.field}>
+                        Quantity
+                        <input
+                          type="number"
+                          min="1"
+                          value={serviceQuantity}
+                          onChange={(event) => setServiceQuantity(event.target.value)}
+                          disabled={selectedServiceCount === 0}
+                        />
+                      </label>
+                      <label className={styles.field}>
+                        Unit
+                        <select
+                          value={serviceUnit}
+                          onChange={(event) => setServiceUnit(event.target.value as "units" | "session")}
+                          disabled={selectedServiceCount === 0}
+                        >
+                          <option value="units">Units</option>
+                          <option value="session">Session(s)</option>
+                        </select>
+                      </label>
+                    </div>
+
                     <label className={styles.field}>
-                      Unit
+                      Service cadence
                       <select
-                        value={serviceUnit}
-                        onChange={(event) => setServiceUnit(event.target.value as "units" | "session")}
+                        value={serviceCadence}
+                        onChange={(event) =>
+                          setServiceCadence(event.target.value as (typeof serviceCadenceOptions)[number])
+                        }
                         disabled={selectedServiceCount === 0}
                       >
-                        <option value="units">Units</option>
-                        <option value="session">Session(s)</option>
+                        {serviceCadenceOptions.map((option) => (
+                          <option key={option}>{option}</option>
+                        ))}
                       </select>
                     </label>
                   </div>
 
-                  <label className={styles.field}>
-                    Service cadence
-                    <select
-                      value={serviceCadence}
-                      onChange={(event) =>
-                        setServiceCadence(event.target.value as (typeof serviceCadenceOptions)[number])
-                      }
-                      disabled={selectedServiceCount === 0}
-                    >
-                      {serviceCadenceOptions.map((option) => (
-                        <option key={option}>{option}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <button
-                  type="button"
-                  className={styles.panelPrimary}
-                  onClick={addServiceInclusion}
-                  disabled={selectedServiceCount === 0}
-                >
-                  {selectedServiceCount === 0
-                    ? "Choose a service to continue"
-                    : editingInclusionId
-                      ? "Update Service Inclusion"
-                      : "Add Service Inclusion"}
-                </button>
-              </div>
-            ) : null}
-
-            {panelKind === "discount" ? (
-              <div className={styles.panelBody}>
-                <p className={styles.sectionHint}>
-                  Recommended: category-level discounts for cleaner reporting and fewer overrides.
-                </p>
-
-                <label className={styles.field}>
-                  Applies to
-                  <select
-                    value={discountAppliesTo}
-                    onChange={(event) => setDiscountAppliesTo(event.target.value as "all" | "category" | "specific")}
+                  <button
+                    type="button"
+                    className={styles.panelPrimary}
+                    onClick={addServiceInclusion}
+                    disabled={selectedServiceCount === 0}
                   >
-                    <option value="all">All treatments and products</option>
-                    <option value="category">Specific category</option>
-                    <option value="specific">Specific treatment/product</option>
-                  </select>
-                </label>
+                    {selectedServiceCount === 0
+                      ? "Choose a service to continue"
+                      : editingInclusionId
+                        ? "Update Service Inclusion"
+                        : "Add Service Inclusion"}
+                  </button>
+                </div>
+              ) : null}
 
-                {discountAppliesTo === "category" ? (
-                  <label className={styles.field}>
-                    Category
-                    <select value={discountCategory} onChange={(event) => setDiscountCategory(event.target.value)}>
-                      {serviceCategories.map((category) => (
-                        <option key={category}>{category}</option>
-                      ))}
-                    </select>
-                  </label>
-                ) : null}
+              {panelKind === "discount" ? (
+                <div className={styles.panelBody}>
+                  <p className={styles.sectionHint}>
+                    Recommended: category-level discounts for cleaner reporting and fewer overrides.
+                  </p>
 
-                {discountAppliesTo === "specific" ? (
-                  <label className={styles.field}>
-                    Treatment
-                    <select
-                      value={discountServiceId}
-                      onChange={(event) => setDiscountServiceId(event.target.value)}
+                  <div className={styles.serviceSelectorCard}>
+                    <p className={styles.rowLabel}>Select categories or treatments</p>
+                    <div className={styles.serviceModalControls}>
+                      <input
+                        value={discountSelectionSearch}
+                        onChange={(event) => setDiscountSelectionSearch(event.target.value)}
+                        placeholder="Search by name"
+                      />
+                    </div>
+
+                    <div className={styles.categoryTree}>
+                      <div className={styles.categoryBlock}>
+                        <div className={styles.categoryRow}>
+                          <span />
+                          <Checkbox
+                            checked={selectedDiscountOptionIds.includes("all")}
+                            ariaLabel="Select all treatments and products"
+                            onChange={() => toggleDiscountSelection("all")}
+                          />
+                          <div className={styles.categoryLabelWrap}>
+                            <p>All treatments and products</p>
+                            <span>Global discount inclusion</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {filteredDiscountCategoryGroups.map((group) => {
+                        const isCategorySelected = selectedDiscountOptionIds.includes(
+                          group.categoryOptionId,
+                        );
+                        const isExpanded =
+                          discountSelectionSearch.trim().length > 0 || expandedCategories.includes(group.category);
+
+                        return (
+                          <div className={styles.categoryBlock} key={`discount-${group.category}`}>
+                            <div className={styles.categoryRow}>
+                              <button
+                                type="button"
+                                className={styles.expandButton}
+                                onClick={() => toggleCategoryExpanded(group.category)}
+                                aria-label={`Toggle ${group.category}`}
+                              >
+                                {isExpanded ? "▾" : "▸"}
+                              </button>
+                              <Checkbox
+                                checked={isCategorySelected}
+                                ariaLabel={`Select ${group.category} for discount`}
+                                onChange={() => toggleDiscountSelection(group.categoryOptionId)}
+                              />
+                              <div className={styles.categoryLabelWrap}>
+                                <p>{group.category}</p>
+                                <span>Category discount</span>
+                              </div>
+                            </div>
+
+                            {isExpanded ? (
+                              <ul className={styles.productList}>
+                                {group.products.map((product) => {
+                                  const isProductSelected = selectedDiscountOptionIds.includes(
+                                    product.optionId,
+                                  );
+
+                                  return (
+                                    <li key={`discount-${product.id}`} className={styles.productRow}>
+                                      <span />
+                                      <Checkbox
+                                        checked={isProductSelected}
+                                        ariaLabel={`Select ${product.name} for discount`}
+                                        onChange={() => toggleDiscountSelection(product.optionId)}
+                                      />
+                                      <div className={styles.productLabelWrap}>
+                                        <p>{product.name}</p>
+                                        <span>{formatCurrency(product.price)}</span>
+                                      </div>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className={styles.selectionCount}>{selectedDiscountCount} selected</p>
+                  </div>
+
+                  <p className={styles.selectionInline}>
+                    <strong>{selectedDiscountCount} selected:</strong> {selectedDiscountPreview}
+                  </p>
+                  <div className={styles.selectionActions}>
+                    <button
+                      type="button"
+                      className={styles.clearSelectionButton}
+                      onClick={clearDiscountSelection}
+                      disabled={selectedDiscountCount === 0}
                     >
-                      {serviceCatalog.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.category} · {item.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                ) : null}
+                      Clear selection
+                    </button>
+                  </div>
 
-                <div className={styles.fieldGridTwo}>
+                  <div className={styles.fieldGridTwo}>
+                    <label className={styles.field}>
+                      Discount type
+                      <select
+                        value={discountAmountType}
+                        onChange={(event) =>
+                          setDiscountAmountType(event.target.value as "percent" | "fixed")
+                        }
+                      >
+                        <option value="percent">Percent (%)</option>
+                        <option value="fixed">Fixed amount ($)</option>
+                      </select>
+                    </label>
+                    <label className={styles.field}>
+                      Amount
+                      <input
+                        type="number"
+                        min="0"
+                        value={discountAmount}
+                        onChange={(event) => setDiscountAmount(event.target.value)}
+                      />
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.panelPrimary}
+                    onClick={addDiscountInclusion}
+                    disabled={selectedDiscountCount === 0 || (Boolean(editingInclusionId) && selectedDiscountCount !== 1)}
+                  >
+                    {selectedDiscountCount === 0
+                      ? "Choose a discount target to continue"
+                      : editingInclusionId && selectedDiscountCount !== 1
+                        ? "Choose 1 target to update"
+                        : editingInclusionId
+                          ? "Update Discount Inclusion"
+                          : "Add Discount Inclusion"}
+                  </button>
+                </div>
+              ) : null}
+
+              {panelKind === "perk" ? (
+                <div className={styles.panelBody}>
+                  <div className={styles.perkPicker}>
+                    <div className={styles.perkPickerHeader}>
+                      <p className={styles.rowLabel}>Available perks</p>
+                      <span className={styles.perkPickerMeta}>
+                        {editingInclusionId ? "Choose 1 perk" : "Select one or more"}
+                      </span>
+                    </div>
+
+                    <div className={styles.inlinePerkCreator}>
+                      <input
+                        value={customPerkLabel}
+                        onChange={(event) => setCustomPerkLabel(event.target.value)}
+                        placeholder="Add custom perk"
+                      />
+                      <button
+                        type="button"
+                        className={styles.inlinePerkAddButton}
+                        onClick={addCustomPerkOption}
+                        disabled={customPerkLabel.trim().length === 0}
+                      >
+                        Add perk
+                      </button>
+                    </div>
+
+                    <div className={styles.perkOptionList}>
+                      {availablePerks.map((perk) => (
+                        <label key={perk} className={styles.perkOptionRow}>
+                          <Checkbox
+                            checked={selectedPerkLabels.includes(perk)}
+                            ariaLabel={`Select ${perk}`}
+                            onChange={() => togglePerkSelection(perk)}
+                          />
+                          <span className={styles.perkOptionLabel}>{perk}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className={styles.selectionCount}>{selectedPerkCount} selected</p>
+                  </div>
+
+                  <div className={styles.selectedPerkWrap}>
+                    <p className={styles.selectionInline}>
+                      <strong>{selectedPerkCount} selected:</strong> {selectedPerkPreview}
+                    </p>
+                    <div className={styles.selectedPerkList}>
+                      {selectedPerkLabels.map((perk) => (
+                        <div key={`selected-perk-${perk}`} className={styles.selectedPerkCard}>
+                          <span>{perk}</span>
+                          <button
+                            type="button"
+                            className={styles.selectedPerkRemove}
+                            onClick={() => removeSelectedPerk(perk)}
+                            aria-label={`Remove ${perk}`}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <label className={styles.field}>
-                    Discount type
+                    Perk cadence
                     <select
-                      value={discountAmountType}
+                      value={perkCadence}
                       onChange={(event) =>
-                        setDiscountAmountType(event.target.value as "percent" | "fixed")
+                        setPerkCadence(event.target.value as "Always" | "Monthly" | "Quarterly")
                       }
                     >
-                      <option value="percent">Percent (%)</option>
-                      <option value="fixed">Fixed amount ($)</option>
+                      <option>Always</option>
+                      <option>Monthly</option>
+                      <option>Quarterly</option>
                     </select>
                   </label>
-                  <label className={styles.field}>
-                    Amount
-                    <input
-                      type="number"
-                      min="0"
-                      value={discountAmount}
-                      onChange={(event) => setDiscountAmount(event.target.value)}
-                    />
-                  </label>
-                </div>
 
-                <button type="button" className={styles.panelPrimary} onClick={addDiscountInclusion}>
-                  {editingInclusionId ? "Update Discount Inclusion" : "Add Discount Inclusion"}
-                </button>
-              </div>
-            ) : null}
-
-            {panelKind === "perk" ? (
-              <div className={styles.panelBody}>
-                <label className={styles.field}>
-                  Perk type
-                  <select value={perkLabel} onChange={(event) => setPerkLabel(event.target.value)}>
-                    {perkLibrary.map((perk) => (
-                      <option key={perk}>{perk}</option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className={styles.field}>
-                  Perk cadence
-                  <select
-                    value={perkCadence}
-                    onChange={(event) =>
-                      setPerkCadence(event.target.value as "Always" | "Monthly" | "Quarterly")
-                    }
+                  <button
+                    type="button"
+                    className={styles.panelPrimary}
+                    onClick={addPerkInclusion}
+                    disabled={selectedPerkCount === 0 || (Boolean(editingInclusionId) && selectedPerkCount !== 1)}
                   >
-                    <option>Always</option>
-                    <option>Monthly</option>
-                    <option>Quarterly</option>
-                  </select>
-                </label>
+                    {selectedPerkCount === 0
+                      ? "Choose a perk to continue"
+                      : editingInclusionId && selectedPerkCount !== 1
+                        ? "Choose 1 perk to update"
+                        : editingInclusionId
+                          ? "Update Perk Inclusion"
+                          : "Add Perk Inclusion"}
+                  </button>
+                </div>
+              ) : null}
 
-                <button type="button" className={styles.panelPrimary} onClick={addPerkInclusion}>
-                  {editingInclusionId ? "Update Perk Inclusion" : "Add Perk Inclusion"}
-                </button>
+              <div className={styles.panePreview}>
+                <p className={styles.rowLabel}>Current inclusions ({inclusions.length})</p>
+                <ul className={styles.panePreviewList}>
+                  {inclusions.length === 0 ? (
+                    <li className={styles.selectionSummaryEmpty}>No inclusions yet</li>
+                  ) : (
+                    inclusions.slice().reverse().map((item) => {
+                      const summary = formatInclusionSummary(item);
+                      return (
+                        <li key={`pane-preview-${item.id}`} className={styles.inclusionPreviewCard}>
+                          <div className={styles.inclusionPreviewHeader}>
+                            <span className={styles.inclusionPreviewType}>{summary.type}</span>
+                            <span className={styles.inclusionPreviewCadence}>{summary.cadence}</span>
+                          </div>
+                          <span className={styles.inclusionPreviewDetail}>{summary.detail}</span>
+                        </li>
+                      );
+                    })
+                  )}
+                </ul>
               </div>
-            ) : null}
-
-            <div className={styles.panePreview}>
-              <p className={styles.rowLabel}>Current inclusions ({inclusions.length})</p>
-              <ul className={styles.panePreviewList}>
-                {inclusions.length === 0 ? (
-                  <li className={styles.selectionSummaryEmpty}>No inclusions yet</li>
-                ) : (
-                  inclusions.slice().reverse().map((item) => {
-                    const summary = formatInclusionSummary(item);
-                    return (
-                      <li key={`pane-preview-${item.id}`}>
-                        <span>{summary.type}</span>
-                        <span>{summary.detail}</span>
-                      </li>
-                    );
-                  })
-                )}
-              </ul>
             </div>
-
           </div>
         </div>
       ) : null}

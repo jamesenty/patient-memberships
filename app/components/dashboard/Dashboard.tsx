@@ -18,15 +18,20 @@ const tabs: { id: TabId; label: string }[] = [
 
 export function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabId>("memberships");
+  const [plans, setPlans] = useState(membershipPlans);
+  const [pendingPlan, setPendingPlan] = useState<(typeof membershipPlans)[number] | null>(null);
 
-  const planCount = membershipPlans.length;
+  const planCount = plans.length;
   const memberCount = useMemo(
-    () => membershipPlans.reduce((sum, plan) => sum + plan.patients, 0),
-    [],
+    () => plans.filter((plan) => plan.isActive).reduce((sum, plan) => sum + plan.patients, 0),
+    [plans],
   );
   const monthlyRevenue = useMemo(
-    () => membershipPlans.reduce((sum, plan) => sum + plan.patients * plan.monthlyPrice, 0),
-    [],
+    () =>
+      plans
+        .filter((plan) => plan.isActive)
+        .reduce((sum, plan) => sum + plan.patients * plan.monthlyPrice, 0),
+    [plans],
   );
 
   const formattedMonthlyRevenue = new Intl.NumberFormat("en-AU", {
@@ -52,6 +57,19 @@ export function Dashboard() {
       icon: "revenue",
     },
   ] as const;
+
+  const confirmTogglePlanStatus = () => {
+    if (!pendingPlan) {
+      return;
+    }
+
+    setPlans((current) =>
+      current.map((plan) =>
+        plan.id === pendingPlan.id ? { ...plan, isActive: !plan.isActive } : plan,
+      ),
+    );
+    setPendingPlan(null);
+  };
 
   return (
     <main className={styles.page}>
@@ -87,12 +105,55 @@ export function Dashboard() {
           />
 
           {activeTab === "memberships" ? (
-            <MembershipsTable plans={membershipPlans} />
+            <MembershipsTable
+              plans={plans}
+              pendingPlanId={pendingPlan?.id ?? null}
+              onTogglePlanStatus={setPendingPlan}
+            />
           ) : (
             <MembersTable members={members} />
           )}
         </section>
       </div>
+
+      {pendingPlan ? (
+        <div className={styles.confirmOverlay} role="dialog" aria-modal="true" aria-label="Confirm membership status change">
+          <div className={styles.confirmCard}>
+            <div className={styles.confirmHeader}>
+              <p className={styles.confirmEyebrow}>Membership Status</p>
+              <h2>{pendingPlan.isActive ? "Pause this membership?" : "Resume this membership?"}</h2>
+            </div>
+            <p className={styles.confirmText}>
+              {pendingPlan.isActive
+                ? `${pendingPlan.name} will be marked inactive and removed from active membership totals.`
+                : `${pendingPlan.name} will be marked active and added back into active membership totals.`}
+            </p>
+            <div className={styles.confirmMeta}>
+              <span>{pendingPlan.patients} patients</span>
+              <span>
+                {new Intl.NumberFormat("en-AU", {
+                  style: "currency",
+                  currency: "AUD",
+                  maximumFractionDigits: 0,
+                }).format(pendingPlan.monthlyPrice)}
+                {" / month"}
+              </span>
+            </div>
+            <div className={styles.confirmActions}>
+              <button type="button" className={styles.confirmSecondary} onClick={() => setPendingPlan(null)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={styles.confirmPrimary}
+                onClick={confirmTogglePlanStatus}
+              >
+                {pendingPlan.isActive ? "Pause Membership" : "Resume Membership"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
