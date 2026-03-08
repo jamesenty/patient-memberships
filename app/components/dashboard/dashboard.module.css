@@ -1,0 +1,296 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--component-bg-page);
+  padding: var(--space-24);
+}
+
+.surface {
+  width: min(1300px, 100%);
+  margin: 0 auto;
+  background-color: var(--component-bg-surface);
+  border: 1px solid var(--component-border-default);
+  border-radius: var(--component-radius-lg);
+  box-shadow: var(--component-shadow-surface);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  padding: 28px 30px 30px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.header h1 {
+  margin: 0 0 8px;
+  color: #232323;
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 500;
+}
+
+.header p {
+  margin: 0;
+  color: var(--component-text-secondary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.ctaButton {
+  height: var(--component-control-height-md);
+  padding: 0 var(--space-16);
+  border-radius: var(--component-radius-sm);
+  border: 1px solid var(--component-action-bg);
+  background-color: var(--component-action-bg);
+  color: var(--component-action-text);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: var(--component-shadow-action);
+}
+
+.ctaButton:hover {
+  background-color: var(--component-action-bg-pressed);
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tabSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tableWrap {
+  border: 1px solid var(--component-border-default);
+  border-radius: var(--component-radius-md);
+  overflow: auto;
+  background-color: var(--component-bg-surface);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1164px;
+}
+
+.table thead th {
+  height: 38px;
+  padding: 0 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--component-border-default);
+  color: var(--component-text-tertiary);
+  background-color: var(--component-bg-muted);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--component-border-default);
+  vertical-align: top;
+  color: var(--component-text-primary);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 230px;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 390px;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 120px;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 100px;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 180px;
+}
+
+.table th:nth-child(6),
+.table td:nth-child(6) {
+  width: 130px;
+}
+
+.nameCell {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planNameRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.tierDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.tierDotGold {
+  background-color: #ffc72e;
+  border-color: #e8b52a;
+}
+
+.tierDotSilver {
+  background-color: #75b6e1;
+  border-color: #4790b9;
+}
+
+.tierDotBronze {
+  background-color: #ebaf64;
+  border-color: #e29534;
+}
+
+.statusPill {
+  width: fit-content;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.statusActive {
+  background-color: #ebf7ed;
+  border-color: #a2cec0;
+  color: #256a54;
+}
+
+.statusInactive {
+  background-color: #f9ebeb;
+  border-color: #eec2c2;
+  color: #8d2929;
+}
+
+.dotList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dotList li {
+  color: #636363;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dotList li::before {
+  content: "• ";
+}
+
+.numeric {
+  color: #232323;
+  font-size: 16px;
+  line-height: 24px;
+  padding-top: 4px;
+  white-space: nowrap;
+}
+
+.actionRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.actionButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #d1ece5;
+  background-color: #f5fbf9;
+  color: #0e4233;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.actionButton:hover {
+  background-color: #ebf7ed;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (max-width: 1360px) {
+  .surface {
+    width: 100%;
+  }
+}
+
+@media (max-width: 900px) {
+  .page {
+    padding: 12px;
+  }
+
+  .surface {
+    border-radius: 16px;
+    padding: 20px 16px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .ctaButton {
+    width: 100%;
+  }
+
+  .metaRow {
+    grid-template-columns: 1fr;
+  }
+}
