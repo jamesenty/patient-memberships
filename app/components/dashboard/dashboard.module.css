@@ -79,6 +79,10 @@
   background-color: var(--color-fill-primary);
 }
 
+.mobileCards {
+  display: none;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -422,6 +426,112 @@
   color: var(--color-text-inverse);
 }
 
+.mobileCard {
+  border: 1px solid var(--color-stroke-default);
+  border-radius: var(--space-16);
+  background: linear-gradient(180deg, var(--color-fill-primary) 0%, var(--color-fill-secondary) 100%);
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+  box-shadow: 0 12px 24px -18px rgba(12, 12, 13, 0.16);
+}
+
+.mobileCardInactive {
+  background: linear-gradient(180deg, var(--color-fill-secondary) 0%, var(--color-fill-primary) 100%);
+}
+
+.mobileCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.mobileActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.mobileMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mobileMetaGrid dt,
+.mobileSectionLabel {
+  margin: 0;
+  font-size: 11px;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-secondary);
+}
+
+.mobileMetaGrid dd {
+  margin: 4px 0 0;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.mobileSection {
+  display: grid;
+  gap: 8px;
+}
+
+.mobileList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.mobileList li {
+  position: relative;
+  padding-left: 16px;
+  color: var(--color-text-tertiary);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.mobileList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--color-fill-brand-primary);
+}
+
+.mobileCardTitle {
+  margin: 4px 0 0;
+  font-size: 18px;
+  line-height: 24px;
+  color: var(--color-text-primary);
+}
+
+.mobilePlanBadge {
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid var(--color-brand-secondary-200);
+  background: var(--color-brand-secondary-50);
+  color: var(--color-icon-brand);
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+}
+
 @media (max-width: 1360px) {
   .surface {
     width: 100%;
@@ -448,5 +558,31 @@
 
   .metaRow {
     grid-template-columns: 1fr;
+  }
+
+  .tableWrap {
+    display: none;
+  }
+
+  .mobileCards {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mobileMetaGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mobileCardHeader {
+    flex-direction: column;
+  }
+
+  .mobileActions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .mobileActions .actionPill {
+    flex: 1;
   }
 }
