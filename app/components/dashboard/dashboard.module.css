@@ -146,7 +146,11 @@
 
 .table th:nth-child(6),
 .table td:nth-child(6) {
-  width: 130px;
+  width: 190px;
+}
+
+.table .actionRow {
+  flex-wrap: nowrap;
 }
 
 .membersTable {
@@ -1219,10 +1223,10 @@
   color: var(--color-text-success);
 }
 
-.policyPillWarning {
-  border-color: var(--color-yellow-300);
-  background: var(--color-fill-warning-weak);
-  color: var(--color-yellow-800);
+.policyPillDanger {
+  border-color: var(--color-stroke-error-secondary);
+  background: var(--color-fill-danger-weak);
+  color: var(--color-red-700);
 }
 
 .manageCancellationSummary {

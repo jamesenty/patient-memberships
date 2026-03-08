@@ -527,12 +527,12 @@ export function MemberDetailPane({
                 <div className={styles.managePolicyRow}>
                   <span
                     className={`${styles.policyPill} ${
-                      minimumTermMet ? styles.policyPillSuccess : styles.policyPillWarning
+                      minimumTermMet ? styles.policyPillSuccess : styles.policyPillDanger
                     }`}
                   >
                     {minimumTermMet
-                      ? "Minimum term met"
-                      : `Minimum term not met · ${remainingCommitmentMonths} month${
+                      ? "Membership term met"
+                      : `Membership term not met · ${remainingCommitmentMonths} month${
                           remainingCommitmentMonths === 1 ? "" : "s"
                         } remaining`}
                   </span>

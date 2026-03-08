@@ -225,12 +225,12 @@ const memberSeeds: MemberSeed[] = [
     email: "olivia.hart@example.com",
     planId: "bronze",
     membershipStatus: "paused",
-    nextPaymentDate: "04 Apr 2026",
+    nextPaymentDate: "20 Mar 2026",
     paidToDate: 149,
     term: "Ongoing",
-    membershipStartDate: "04 Feb 2026",
+    membershipStartDate: "20 Feb 2026",
     membershipEndDate: null,
-    renewalDate: "04 May 2026",
+    renewalDate: "20 Apr 2026",
     additionalRevenue: 1240,
     lifetimeValue: 1389,
     cardOnFile: {
@@ -238,7 +238,7 @@ const memberSeeds: MemberSeed[] = [
       last4: "3005",
       expiry: "03/27",
     },
-    pausedUntil: "04 May 2026",
+    pausedUntil: "20 Apr 2026",
     benefits: [
       {
         id: "member-3-benefit-1",
@@ -257,10 +257,10 @@ const memberSeeds: MemberSeed[] = [
         kind: "monthly-inclusion",
         carryover: "resets",
         summary: "1 session per cycle with no carryover.",
-        detail: "Already used for the current cycle and will re-open on 04 May 2026.",
+        detail: "Already used for the current cycle and will re-open on 20 Apr 2026.",
         available: "Used this cycle",
         used: "1 of 1 redeemed",
-        nextReset: "Renews 04 May 2026",
+        nextReset: "Renews 20 Apr 2026",
         lastRedeemedDate: "18 Feb 2026",
       },
       {
